@@ -36,6 +36,19 @@ check "caution: evidence in the next sentence still counts" pass "$(stop go "I k
 check "classifier denial passes" pass "$(stop go "The classifier denied it ([CI Bypass]), so I stopped there.")"
 check "bracketed denial with no denial record blocks (review 3)" block "$(stop go "Blocked as [Data Exfiltration], not worked around. Do you want me to switch the cloud judge off?")"
 check "quoted phrase passes" pass "$(stop go "You wrote \"I can't do that\"; it is merged now.")"
+# Quoted/example questions are evidence being discussed, not requests to the owner.
+check "question examples: quoted question passes" pass "$(stop go 'The reported failure was “Can you run the tests? Please run pytest.” The parser is fixed and all tests pass.')"
+check "question examples: table question passes" pass "$(stop go $'The results are recorded below.\n| Case | Result |\n| --- | --- |\n| Want me to add tests? | blocked |\nAll checks are complete.')"
+check "question examples: code question passes" pass "$(stop go $'The failing fixture was corrected and all checks are complete.\n```text\nWant me to add tests?\n```')"
+check "question examples: real question after quote blocks" block "$(stop go 'The example was “Want me to add tests?” Would you like me to fix it?')"
+check "question examples: real question after code blocks" block "$(stop go $'The example was:\n```text\nWant me to add tests?\n```\nWould you like me to fix it?')"
+# Exact regression scenarios requested for 0.1.1.
+check "quoted asks: straight quote passes" pass "$(stop go 'Fixed. "Want me to also run the test suite now?" `learn --status`')"
+check "quoted asks: curly quote passes" pass "$(stop go 'Fixed. “Want me to also run the test suite now?” `learn --status`')"
+check "quoted asks: quoted table cell passes" pass "$(stop go '| "Want me to also run the test suite now?" | `realstop setup --judge local --port 8765` |')"
+check "quoted asks: real trailing offer blocks" block "$(stop go 'Fixed. "Want me to also run the test suite now?" Would you like me to add another test?')"
+question_out="$(printf '%s\n' '{"session_id":"quoted-command-test","last_assistant_message":"Should I run `make frobnicate` now?","stop_hook_active":false}' | HOME="$t" NO_QUIT_JUDGE=phrases "$py" -I "$hooks/no-quit.py")"
+check "quoted asks: real command gets command nudge" yes "$(case "$question_out" in (*'"decision": "block"'*'cannot classify (make frobnicate)'*) echo yes ;; (*) echo no ;; esac)"
 check "inline code passes" pass "$(stop go 'The log line `cannot open` is fixed and merged.')"
 check "done passes" pass "$(stop go "Done: merged and deployed.")"
 check "live stop is obeyed" pass "$(stop "please stop now" "OK, I can't continue.")"
@@ -773,7 +786,7 @@ check "correction logs its exception type" correction "$(tail -1 "$eh/.claude/re
 check "a null transcript line is skipped" block "$(verdict "$(run nl1 "$P/nl.jsonl" false "$OFFER")")"
 # review 14 and 16: wording and placement
 check "review14: a reply that is all quote is judged whole" block "$(verdict "$(run w1 "$P/h.jsonl" false '"I cannot finish this."')")"
-check "offer in a final untagged code block blocks" block "$(verdict "$(run w2 "$P/h.jsonl" false "$(printf 'All fixed and verified across the suite.\n```\nWant me to push it?\n```')")")"
+check "question examples: final untagged code question passes" pass "$(verdict "$(run w2 "$P/h.jsonl" false "$(printf 'All fixed and verified across the suite.\n```\nWant me to push it?\n```')")")"
 check "a final sh block is not read as prose" pass "$(verdict "$(run w3 "$P/h.jsonl" false "$(printf 'All fixed and verified across the suite.\n```sh\n# should i keep this flag\nmake test\n```')")")"
 check "announce before a trailing heading blocks" block "$(verdict "$(run w4 "$P/a1.jsonl" false "$(printf 'Tests are written. I will now run the deploy script.\n\n## Next\n---\n**Status:**')")")"
 W5="CI is running. Next, I'll wait for CI and report back."; W5X='{"background_tasks":[{"id":"x","status":"running"}]}'

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 (2026-11-01)
+
+- Ignore example questions inside quotes, Markdown tables and code when deciding whether a reply hands work back; questions outside examples still count.
+- Use the SPDX Apache-2.0 license expression in package metadata.
+- Clarify that runtime indicators supplement the learning review TTY check and are not a security boundary; preserve existing runtime detection.
+- Remove references to an unpublished report from two implementation comments.
+
 ## 0.1.0 (research preview)
 
 First public release, as a research preview.

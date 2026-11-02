@@ -35,6 +35,10 @@ PY
   else echo "FAIL mutant '$1' survived: no '$5' failure"; fail=1; fi
 }
 
+mutant "question examples: quoted examples not filtered" no-quit.py '    text = without_question_examples(text)' '    text = text' "question examples: quoted question passes"
+mutant "question examples: table examples not filtered" no-quit.py '    text = without_question_examples(text)' '    text = text' "question examples: table question passes"
+mutant "question examples: code examples not filtered" no-quit.py '    text = without_question_examples(text)' '    text = text' "question examples: code question passes"
+mutant "question examples: real asks discarded" no-quit.py '    text = without_question_examples(text)' '    text = ""' "question examples: real question after quote blocks"
 mutant "errors.jsonl cap dropped" no-quit.py 'if os.path.getsize(path) > ERR_MAX_BYTES:' 'if False:' "errors.jsonl is capped at the newest 1000 lines (+1 new, then it grows again)"
 mutant "drop USER_STOP check" no-quit.py 'if not sub and USER_STOP.search(strip_quoted' 'if False and USER_STOP.search(strip_quoted' "live stop is obeyed"
 mutant "drop denial-record pass-through" no-quit.py '    if errors and denial_scoped(body, text, errors, n, extra):' '    if False:' "denial scope: a named denial with nothing else left is excused before any judge"

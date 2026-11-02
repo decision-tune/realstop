@@ -50,7 +50,7 @@ DEADLINE = time.monotonic() + BUDGET_S  # one hook run per process
 # Noisy: bootstrap 5-95% ranges 0.59-0.75, 0.38-0.57, 0.30-0.38. Re-derive with the model (2026-10-30, dial.py).
 DT_THRESHOLDS = {"light": 0.6813, "moderate": 0.5066, "hard": 0.3267}
 # with a phrase hit (offer, deferral, announcement, give-up words with zero tools, unearned caution) the bar drops to
-# these (technical report, tuning of the with-hit bar): the lowest value per strength whose wrong nudges on
+# these: the lowest value per strength whose wrong nudges on
 # the same 694 SELECT rows stay within 5% / 10% / 15% (reached 4.9% / 9.7% / 14.6%; recall 39.8 -> 44.8%, 53.1 -> 54.8%,
 # 62.2 -> 64.7%). Short textbook quits score 0.14 to 0.26 and still pass at moderate; catching them needs about 0.13,
 # which costs 15.2% wrong nudges on select ("probe-pinned" in the tuning record).
@@ -58,7 +58,7 @@ DT_THRESHOLDS_WITH_HIT = {"light": 0.5881, "moderate": 0.3363, "hard": 0.2264}
 # owner decision 2026-10-30: with the local judge configured, a reply shorter than this (characters, reply.strip()) is
 # decided by the rules alone and no judge is called; the model scores short textbook quits 0.14 to 0.26. Chosen on the
 # v3-quit pack's 694 SELECT rows from {150, 200, 300, 400, 600}: the best recall with wrong nudges at or under 10% at
-# moderate (technical report, short-reply rule). Ceiling: a length heuristic; a long reply that is all filler still goes to the model.
+# moderate. Ceiling: a length heuristic; a long reply that is all filler still goes to the model.
 SHORT_REPLY_CHARS = 400
 DEFAULTS = {"judge": "auto", "local_url": "http://127.0.0.1:8765", "model_dir": "", "strength": "moderate",
             "dt_thresholds": DT_THRESHOLDS, "dt_thresholds_with_hit": DT_THRESHOLDS_WITH_HIT, "quit_min": 0.6, "quit_with_hit": 0.3, "gate_max": 0.5, "examples": [],
@@ -277,6 +277,24 @@ def strip_quoted(text: str) -> str:
     text = re.sub(r"`[^`\n]*`", " ", text)
     text = re.sub(r"^\s*>.*$", " ", text, flags=re.M)
     return re.sub(r"[\"“][^\"”\n]{0,300}[\"”]", " ", text)
+
+
+def without_question_examples(text: str) -> str:
+    """Remove quoted/example questions before sentence splitting can turn them into apparent asks.
+
+    Preserve surrounding prose: a real hand-back after an example still counts. Non-question
+    commands remain available to handed() and approval checks. This is Markdown-aware filtering,
+    not a security boundary; malformed/unclosed quoting is treated as prose.
+    """
+    def question(m):
+        return " " if "?" in m.group(0) else m.group(0)
+
+    # Match whole code spans first, so quotes inside code cannot split an example.
+    text = re.sub(r"```.*?```|~~~.*?~~~|`[^`\n]*`", question, text, flags=re.S)
+    text = re.sub(r'^\s*>[^\n]*\?[^\n]*$', " ", text, flags=re.M)
+    text = re.sub(r'^\s*\|[^\n]*\?[^\n]*\|\s*$', " ", text, flags=re.M)
+    text = re.sub(r'"[^"\n]*"|“[^”]*”|‘[^’]*’|(?<!\w)\'[^\'\n]*\'(?!\w)', question, text)
+    return text
 
 
 def head_tail(s: str, head: int, tail: int) -> str:
@@ -1086,6 +1104,7 @@ def duplicate(key: str, h: str) -> bool:
 def evaluate(payload: dict, sub: bool, st: dict, stateful: bool, user: str, text: str, tools, errors=(),
              bg_launch: bool = False, denied=()) -> dict | None:
     """The block decision for one stop; st (per-session state) is updated in place. None lets the stop through."""
+    text = without_question_examples(text)
     n = len(tools) if tools is not None else None
     errors = list(errors or [])
     sid = payload.get("session_id", "")

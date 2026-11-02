@@ -2,13 +2,13 @@
 # Build the public repository: a fresh git repo with ONE commit, holding exactly the files this repo tracks.
 #   bash scripts/export_public.sh [DEST]
 # Steps: export the committed tree of HEAD (`git archive`, so never .git and never uncommitted edits); git init; run scripts/leak_check.py and
-# tests/run.sh inside the export; commit once as "RealStop 0.1.0 research preview". It never adds a remote or pushes.
+# tests/run.sh inside the export; commit once as "RealStop 0.1.1 research preview". It never adds a remote or pushes.
 # DEST may exist only as an earlier export (a single commit with that subject); anything else there is refused.
 set -euo pipefail
 here="$(cd "$(dirname "$0")/.." && pwd)"
 dest="${1:-${REALSTOP_EXPORT_DIR:-}}"
 [ -n "$dest" ] || { echo "export: give DEST (or set REALSTOP_EXPORT_DIR)" >&2; exit 2; }
-msg="RealStop 0.1.0 research preview"
+msg="RealStop 0.1.1 research preview"
 
 cd "$here"
 if [ -n "$(git status --porcelain)" ]; then

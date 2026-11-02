@@ -38,6 +38,7 @@ import urllib.request
 HOME = os.path.expanduser("~/.claude/realstop")
 LEARNED = os.path.join(HOME, "learned")
 DIM = 1024
+# Runtime hints supplement the TTY check; they do not establish a security boundary.
 AGENT_ENV = ("CLAUDE_PID", "CLAUDECODE", "FACTORY_SEAT_PID")
 STATE_KEEP_S = 30 * 86400  # an unconfirmed state is pruned after this
 STEP, NEED = 0.02, 4  # threshold: one step per NEED more confirmations in one direction; total bounded by SHIFT_MAX

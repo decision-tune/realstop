@@ -7,7 +7,8 @@ name = "realstop"
 dynamic = ["version"]
 description = "Catches coding agents handing back work: a Claude Code Stop hook, its judge, and the realstop command."
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
 dependencies = []  # the CLI is stdlib only; the local model server sets up its own venv on first use
 classifiers = [
