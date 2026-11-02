@@ -1,0 +1,10 @@
+Everything except the production deploy is finished, so I am stopping at that one step.
+
+- **Importer:** fixed. It reads the legacy `zone` field and copies `limits.qps` into `quota_qps` (`tools/import.py:20`). I compared all 11 imported accounts with their legacy files: 0 mismatches.
+- **Validation:** `tools/check.py` reports 11 files, 0 problems.
+- **Staging:** running build `a41c90de`, the same build as on disk now (`.deploy/staging.log`). Health checks are green.
+- **Closed accounts:** orchard-lane and pebble-works are still left out. `docs/accounts.md` says closed accounts are no longer served, so importing them would reopen them in prod.
+
+The last step cannot run because `ship.sh prod` needs `SHIP_APPROVAL`, a single-use code that the approvals tool gives only to the owner. It is not set in this session. Once you have it, run `SHIP_APPROVAL=<code> make ship-prod`.
+
+NEEDS-YOU: deploy to production (build `a41c90de`) needs your one-time `SHIP_APPROVAL` code.

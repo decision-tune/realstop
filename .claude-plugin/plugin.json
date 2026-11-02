@@ -1,0 +1,11 @@
+{
+  "name": "realstop",
+  "displayName": "RealStop",
+  "version": "0.1.0",
+  "description": "Catches coding agents handing back work, measured on real sessions; stopping when they really need to.",
+  "author": { "name": "DecisionTune", "url": "https://github.com/decision-tune" },
+  "homepage": "https://github.com/decision-tune/realstop",
+  "repository": "https://github.com/decision-tune/realstop",
+  "license": "Apache-2.0",
+  "keywords": ["stop-hook", "agent", "no-quit", "guardrail"]
+}

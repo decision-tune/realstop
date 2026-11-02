@@ -1,0 +1,17 @@
+{
+  "description": "RealStop: Stop and SubagentStop judge a handed-back stop, UserPromptSubmit notices corrections, SessionStart learns from them.",
+  "hooks": {
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "python3 -I \"${CLAUDE_PLUGIN_ROOT}/hooks/no-quit.py\"", "timeout": 20 } ] }
+    ],
+    "SubagentStop": [
+      { "hooks": [ { "type": "command", "command": "python3 -I \"${CLAUDE_PLUGIN_ROOT}/hooks/no-quit.py\"", "timeout": 20 } ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "python3 -I \"${CLAUDE_PLUGIN_ROOT}/hooks/correction.py\"", "timeout": 5 } ] }
+    ],
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "python3 -I \"${CLAUDE_PLUGIN_ROOT}/hooks/learn.py\"", "timeout": 10 } ] }
+    ]
+  }
+}

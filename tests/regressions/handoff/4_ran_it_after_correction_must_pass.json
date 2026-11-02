@@ -1,0 +1,41 @@
+{
+ "expected": "pass",
+ "why": "Synthetic: after the owner's correction the agent ran the approve itself and reports the result; a mention of the command in the past tense is not a handoff.",
+ "payload": {},
+ "reply": "I ran `./tools/queue task ws2 approve` myself after reading the diff, and it approved. A watcher will tell me when ws2 lands or if anything fails.",
+ "transcript": [
+  {
+   "type": "user",
+   "message": {
+    "content": "No! You can run that yourself. Why are you asking for something you can do?"
+   }
+  },
+  {
+   "type": "assistant",
+   "message": {
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "t1",
+      "name": "Bash",
+      "input": {
+       "command": "cd ~/proj && ./tools/queue task ws2 approve"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "user",
+   "message": {
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "t1",
+      "content": "approved ws2"
+     }
+    ]
+   }
+  }
+ ]
+}

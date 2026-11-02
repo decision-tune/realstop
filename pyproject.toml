@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "realstop"
+dynamic = ["version"]
+description = "Catches coding agents handing back work: a Claude Code Stop hook, its judge, and the realstop command."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = []  # the CLI is stdlib only; the local model server sets up its own venv on first use
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+]
+
+[project.scripts]
+realstop = "realstop.cli:main"
+
+[tool.hatch.version]
+path = "realstop/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["realstop"]
+
+# the hooks, scripts, data and skill ship inside the wheel as realstop/_res (realstop/paths.py: res_root)
+[tool.hatch.build.targets.wheel.force-include]
+"hooks/no-quit.py" = "realstop/_res/hooks/no-quit.py"
+"hooks/correction.py" = "realstop/_res/hooks/correction.py"
+"hooks/learn.py" = "realstop/_res/hooks/learn.py"
+"scripts" = "realstop/_res/scripts"
+"data/regression_pairs.jsonl" = "realstop/_res/data/regression_pairs.jsonl"
+"skills/realstop/SKILL.md" = "realstop/_res/skills/realstop/SKILL.md"
+"CHANGELOG.md" = "realstop/_res/CHANGELOG.md"
+
+[tool.hatch.build.targets.sdist]
+include = ["realstop", "hooks", "scripts", "data", "skills", "CHANGELOG.md", "README.md", "LICENSE", "pyproject.toml"]

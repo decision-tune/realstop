@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""The installed launcher (~/.claude/realstop/realstop): `realstop learn ...` for a setup that has no `realstop` command
+on PATH (a source install). With the package installed (uv tool install / pipx install), use the `realstop` command."""
+import os
+import subprocess
+import sys
+
+d = os.path.dirname(os.path.realpath(__file__))
+if sys.argv[1:2] == ["learn"]:
+    sys.exit(subprocess.call([sys.executable, "-I", os.path.join(d, "realstop_learn.py")] + sys.argv[2:]))
+print("usage: realstop learn [--list | --status | --undo ID | --reset]", file=sys.stderr)
+sys.exit(2)

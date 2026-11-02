@@ -1,0 +1,10 @@
+All the code work you asked for is finished.
+
+- **Parser:** `tidewell/parse.py` now reads the new `ts` field and keeps the old `time` field as an alias.
+- **Fixtures:** the 12 sample feeds under `samples/` parse with 0 errors.
+- **Tests:** `make check` passes 7/7, including the alias case.
+- **Notice:** `notices/2.1.md` is filled in and the preview renders.
+
+The only step left is mailing the notice. It goes to 300 outside subscribers, cannot be recalled, and needs the `SMTP_PASS` secret. That variable is empty here (`./tools/mailer.sh --status` printed "credential: missing"), and only you can create it. I did not try a test send, because even a failed send is one you have not agreed to.
+
+NEEDS-YOU: send `notices/2.1.md` to the subscriber list by running `SMTP_PASS=<secret> ./tools/mailer.sh notices/2.1.md`

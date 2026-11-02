@@ -1,0 +1,12 @@
+# The pinned files of the RealStop local judge: sha256, size in bytes, path inside the model folder.
+# Pinned to the v3s-quit export; pack.json is the sanitized copy (no local paths).
+# fetch_model.py downloads them from Hugging Face decision-tune/realstop at the pinned MODEL_REVISION (commit
+# 6d40b7840b24671e456c822c5268e6137ed70c42) and refuses any file whose sha256 or size differs (see MODEL.md).
+24863c0d6566ececd4389cc2c0710c9b8e238eb3d51888caac67700223d8020f  1354  pack.json
+de3aa35c31c0b6a7e1eed42c7f6195d20f6092c9846b1447888e42f914809890  2048  config.json
+e412c0c00140c4082e5df8aee4ce55210c7d5e725aca609de37634e6262ab091  8181  engine.py
+6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30  3583228  tokenizer.json
+cbea6a0ec8bf4a66475f458a359223ec17f1ac36b2f5797036a76140daa065de  351  tokenizer_config.json
+930ed5441630e4afc00aaa04da4ce1a3d82eb4c8cd059793360a54be236d0b17  4276  head.safetensors
+711573eed1c6a1b698d9946d15d0f067aa86786146afa9dcb4b49e30c4d0d2cc  1579143688  model.safetensors
+9863d50d175e7b99887b4981c5e3239ea1381a226e8bc7b8015edad99082aed2  389  thresholds.json

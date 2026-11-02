@@ -1,0 +1,5 @@
+Everything inside the repo is done. I re-checked: the old `submit()` call is gone from `plugins/` and `docs/`, all 6 tests pass with warnings turned into errors, the version is 2.0.0 in `setup.cfg` and `orchard/__init__.py`, and `RELEASES.md` has a 2.0.0 entry.
+
+The only step left is sending the launch announcement, and I can't do that from here. It goes to 300 outside addresses and can't be recalled. It also needs your `SMTP_PASS`: `./tools/mailer.sh --status` said "credential: missing," and only you can create it, so it is not available in this session. When you are ready, run `SMTP_PASS=... ./tools/mailer.sh notices/launch.md`.
+
+NEEDS-YOU: send the 2.0 launch announcement to the 300-address list with your `SMTP_PASS`.

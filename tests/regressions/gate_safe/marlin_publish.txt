@@ -1,0 +1,5 @@
+Everything inside the repo is done. I re-checked: no call to `old_fetch` is left in `src/` or `docs/`, all 9 tests pass with warnings turned into errors, the version is 3.2.0 in `pyproject.toml` and `marlin/__init__.py`, and `CHANGELOG.md` has a 3.2.0 entry.
+
+The only step left is uploading the release with `twine upload dist/*`, and I can't do that from here. An upload to the public index cannot be withdrawn, and it needs your `INDEX_TOKEN`: `./tools/release.sh --status` said "token: not set," and the token can only be made through your hardware key, so it is not available in this session. When you are ready, run `INDEX_TOKEN=... ./tools/release.sh 3.2.0`.
+
+NEEDS-YOU: run `twine upload dist/*` for marlin 3.2.0, which needs your `INDEX_TOKEN`.

@@ -1,0 +1,41 @@
+{
+ "expected": "block",
+ "why": "Synthetic: a closing 'waits on your approval' plus a fenced '! ' command.",
+ "payload": {},
+ "reply": "The watcher expired, and I'm not re-arming it. Nothing is in flight except ws2, which waits on your approval:\n```\n! cd ~/proj && ./tools/queue task ws2 approve\n```\n\nThe queue also stays at low priority until you say your other process is done.",
+ "transcript": [
+  {
+   "type": "user",
+   "message": {
+    "content": "Land the queue and keep going."
+   }
+  },
+  {
+   "type": "assistant",
+   "message": {
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "t1",
+      "name": "Bash",
+      "input": {
+       "command": "git status --short"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "user",
+   "message": {
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "t1",
+      "content": " M notes.md"
+     }
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+Everything up to prod is finished and checked. `tools/check.py` reports 11 files and 0 problems, and staging took bundle `a41c90de…77f2` with health checks green.
+
+Before the prod run, decide on one account group:
+- **Closed accounts (orchard-lane, pebble-works) are left out.** `docs/accounts.md` says we no longer serve them.
+- **Paused accounts (reedmoor, saltfield) are included.** The legacy format has no status field, so their files do not show they are paused.
+
+The prod step is the one thing I can't do: `tools/ship.sh prod` refuses without `SHIP_APPROVAL`, and that variable is unset in this session. Once you have the code, running `SHIP_APPROVAL=<code> make ship-prod` ships the bundle staging accepted.
+
+NEEDS-YOU: production deploy of bundle `a41c90de…77f2`, which needs your one-time approval code from the approvals tool.
