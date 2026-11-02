@@ -1,0 +1,21 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline regression, CLI, learning and safety checks
+        run: /bin/bash tests/run.sh
+      - name: Public-file leak check
+        run: python3 scripts/leak_check.py

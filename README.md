@@ -1,20 +1,43 @@
 # RealStop
 
-**Built to block hand-backs from coding agents and let real approval stops through.**
+![RealStop by DecisionTune: less “Want me to?”, more doing](assets/readme-banner.png)
 
-RealStop is a research preview of a Claude Code Stop hook plus a skill. When the agent tries to end its turn, a judge reads the stop. If the agent is handing back work it could do itself ("The requested tests are still missing. Want me to add them?", "I'll do that next", "you'll need to run this"), the hook sends it back to work. RealStop calls that stop a quit. If the agent stopped for something only you can approve (a deploy, a publish, a payment, a login only you have), the stop goes through. The block message is approval-first: it states the approval rule before anything else, so the agent must still ask before it deploys, sends, spends or deletes, and the nudge never tells it to go ahead. In two small retests with two revised variants of the message, agents made 0 of 32 attempts at approval-gated actions, against 29 of 36 with the old message. Zero attempts is not a guarantee. Approval enforcement belongs in the harness.
+[![PyPI](https://img.shields.io/pypi/v/realstop?color=da3200&style=flat-square)](https://pypi.org/project/realstop/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-da3200?style=flat-square)](LICENSE)
+[![Checks](https://github.com/decision-tune/realstop/actions/workflows/checks.yml/badge.svg)](https://github.com/decision-tune/realstop/actions/workflows/checks.yml)
+[![Status: research preview](https://img.shields.io/badge/status-research_preview-4f5661?style=flat-square)](#limits)
 
-The hooks, the skill and the phrase rules are always on. On top of them you choose who judges each stop: a small DecisionTune model on your Mac (the default), a cloud decision model, or the rules alone. On 864 test turn ends from real sessions, the local model (moderate) caught 67.5% (195 of 289) of hand-backs at 15.8% (91 of 575) false interventions, against 56.7% (164 of 289) at 14.6% (84 of 575) for the phrase rules on the same rows. A false intervention is a right stop that the hook blocked. On an Apple M5 Pro (macOS 27.2), the shipped model answers in a median of 27 ms (p95 33 ms) once warm, and the full hook takes a median of 186 ms per stop (136 ms when a reply under 400 characters skips the model). In local mode, RealStop sends no prompt or reply text to an outside judge. Claude Code itself still talks to its provider.
+**A local Stop hook for Claude Code that catches work handed back to you.** When an agent tries to end with “Want me to add the requested tests?”, RealStop can return feedback and keep the turn going. Approval stops still belong to you; harness permissions remain the authority.
 
-In live runs, RealStop removed closing offers. The pilots were too small to show that agents finish more work. All data come from one developer's sessions (see [Limits](#limits)).
+[See it work](https://decisiontune.com/realstop/?utm_source=github&utm_medium=readme&utm_campaign=realstop_launch) · [Install](#install) · [Model card](https://huggingface.co/decision-tune/realstop) · [Evidence](#how-well-it-works) · [Limits](#limits)
 
 ```bash
-git clone https://github.com/decision-tune/realstop && cd realstop && uv tool install . && realstop setup
+uv tool install realstop
+realstop setup --judge local
+realstop serve
 ```
+
+The local server needs Apple silicon. Keep it running in a separate terminal. For no model download, use `realstop setup --judge rules` instead. This release integrates with **Claude Code, not Codex**.
+
+## See the decision
+
+![Three synthetic stops replayed through RealStop 0.1.1: a hand-back blocks; a production approval and a finished task pass](assets/hook-replay.gif)
+
+*Actual hook outputs on synthetic fixtures, using the phrase rules. This shows stop decisions—not proof of task completion or benchmark performance. [Static explanation](assets/how-it-works.png) · [Replay provenance](assets/README.md).*
+
+| Agent's attempted stop | Intended behavior |
+|---|---|
+| “The requested tests are missing. Want me to add them?” | Return feedback so the agent can continue |
+| “May I deploy to production?” | Let the approval stop through |
+| “Implemented the requested tests. All three pass.” | Let the turn end; the hook cannot verify the claim |
+
+## What the evidence says
+
+At the default local setting, the reported offline test caught **67.5% of hand-backs** with **15.8% false interventions**. Those 864 turn ends came from one developer and were used during development. Live pilots removed closing offers but did **not** establish that agents finish more work. [Full results and limitations below](#how-well-it-works).
 
 ## Install
 
-From a clone, `uv tool install .` or `pipx install .` gives you the `realstop` command. `bash install.sh` also works. It installs the package (uv, else pipx, else `pip install --user`) and runs `realstop setup`. It also accepts the flags `--judge`, `--strength`, `--pause`, `--resume`, `--diagnose`, `--uninstall` and `--keep-server`, and maps them to the commands below.
+`uv tool install realstop` or `pipx install realstop` gives you the `realstop` command. From a clone, use `uv tool install .`. `bash install.sh` also works. It installs the package (uv, else pipx, else `pip install --user`) and runs `realstop setup`. It also accepts the flags `--judge`, `--strength`, `--pause`, `--resume`, `--diagnose`, `--uninstall` and `--keep-server`, and maps them to the commands below.
 
 ```bash
 realstop setup                  # first-time install; asks which judge (1 local model, 2 cloud decision model, 3 rules); safe to re-run
