@@ -12,10 +12,22 @@ license-files = ["LICENSE"]
 requires-python = ">=3.9"
 dependencies = []  # the CLI is stdlib only; the local model server sets up its own venv on first use
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Operating System :: MacOS",
   "Operating System :: POSIX :: Linux",
+  "Topic :: Software Development",
 ]
+keywords = ["claude-code", "codex-cli", "coding-agents", "stop-hook", "decision-tune"]
+
+[project.urls]
+Homepage = "https://decisiontune.com/realstop/"
+Repository = "https://github.com/decision-tune/realstop"
+Model = "https://huggingface.co/decision-tune/realstop"
+Changelog = "https://github.com/decision-tune/realstop/blob/main/CHANGELOG.md"
+Issues = "https://github.com/decision-tune/realstop/issues"
 
 [project.scripts]
 realstop = "realstop.cli:main"

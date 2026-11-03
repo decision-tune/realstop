@@ -1,6 +1,6 @@
 # RealStop
 
-![RealStop by DecisionTune: less “Want me to?”, more doing](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/readme-banner.png)
+![RealStop by DecisionTune: less “Want me to?”, more doing](https://raw.githubusercontent.com/decision-tune/realstop/main/assets/readme-banner.png)
 
 [![PyPI](https://img.shields.io/pypi/v/realstop?color=da3200&style=flat-square)](https://pypi.org/project/realstop/)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-da3200?style=flat-square)](https://github.com/decision-tune/realstop/blob/v0.2.0/LICENSE)
@@ -21,7 +21,7 @@ The local server needs Apple silicon. Keep it running in a separate terminal. Fo
 
 ## Codex CLI
 
-RealStop 0.2.0 adds a rules adapter for main-agent turns on macOS and Linux. Tested with Codex CLI 0.166.0. Install the 0.2.0 wheel from the [GitHub release](https://github.com/decision-tune/realstop/releases/tag/v0.2.0), then run:
+RealStop 0.2.0 adds a rules adapter for main-agent turns on macOS and Linux. Tested with Codex CLI 0.166.0. Install or upgrade with `uv tool install --upgrade realstop`, then run:
 
 ```bash
 realstop setup --host codex --judge rules
@@ -40,6 +40,10 @@ The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task finge
 ![Three synthetic stops replayed through RealStop 0.1.1: a hand-back blocks; a production approval and a finished task pass](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/hook-replay.gif)
 
 *Actual hook outputs on synthetic fixtures, using the phrase rules. This shows stop decisions—not proof of task completion or benchmark performance. [Static explanation](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/how-it-works.png) · [Replay provenance](https://github.com/decision-tune/realstop/blob/v0.2.0/assets/README.md).*
+
+![A real Claude Code session: the agent offers to continue, RealStop blocks the stop, and the agent re-checks and finishes](https://raw.githubusercontent.com/decision-tune/realstop/main/assets/real-session-block.gif)
+
+*A real Claude Code session in a sandbox repo (RealStop 0.1.0, 2026-10-31). The agent ends with an offer (“Tell me when you want me to take it”), the Stop hook blocks the stop, and the agent re-checks the request and ends correctly without starting unrequested work. Recorded with an earlier wording of the hook message.*
 
 | Agent's attempted stop | Intended behavior |
 |---|---|
