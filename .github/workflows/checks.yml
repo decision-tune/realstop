@@ -17,5 +17,7 @@ jobs:
           python-version: '3.12'
       - name: Offline regression, CLI, learning and safety checks
         run: /bin/bash tests/run.sh
+      - name: Codex CLI adapter fixtures
+        run: python3 tests/codex.py
       - name: Public-file leak check
         run: python3 scripts/leak_check.py

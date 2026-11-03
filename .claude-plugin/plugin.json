@@ -1,7 +1,7 @@
 {
   "name": "realstop",
   "displayName": "RealStop",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Catches coding agents handing back work, measured on real sessions; stopping when they really need to.",
   "author": { "name": "DecisionTune", "url": "https://github.com/decision-tune" },
   "homepage": "https://github.com/decision-tune/realstop",
