@@ -105,6 +105,6 @@ check "uninstall names how to remove the command" yes "$(has "$o" "uv tool unins
 check "the console script points at cli:main" 'realstop = "realstop.cli:main"' "$(grep '^realstop = ' "$here/pyproject.toml")"
 missing=""; for f in $(sed -n '/force-include\]/,/^$/s/^"\([^"]*\)" = .*/\1/p' "$here/pyproject.toml"); do [ -e "$here/$f" ] || missing="$missing $f"; done
 check "every file the wheel bundles exists in the clone" "" "$missing"
-check "the bundled layout is the one paths.res_root() expects" "no-quit.py correction.py learn.py" "$(sed -n 's#^"hooks/\([a-z.-]*\)" = "realstop/_res/hooks/.*#\1#p' "$here/pyproject.toml" | tr '\n' ' ' | sed 's/ $//')"
-check "the CLI imports only the standard library" "" "$(grep -hE '^(import|from) ' "$here"/realstop/*.py | grep -vE '^from (\.|__future__)|^import (argparse|getpass|hashlib|json|os|platform|re|shutil|subprocess|sys|time|urllib\.error|urllib\.request|plistlib)$|^from (pathlib|typing|importlib\.metadata) import' )"
+check "the bundled layout is the one paths.res_root() expects" "codex-stop.py no-quit.py correction.py learn.py" "$(sed -n 's#^"hooks/\([a-z.-]*\)" = "realstop/_res/hooks/.*#\1#p' "$here/pyproject.toml" | tr '\n' ' ' | sed 's/ $//')"
+check "the CLI imports only the standard library" "" "$(grep -hE '^(import|from) ' "$here"/realstop/*.py | grep -vE '^from (\.|__future__)|^import (argparse|fcntl|getpass|hashlib|json|os|platform|re|shlex|shutil|sqlite3|subprocess|sys|tempfile|time|urllib\.error|urllib\.request|plistlib)$|^from (pathlib|typing|importlib\.metadata) import' )"
 exit $fail
