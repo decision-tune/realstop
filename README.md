@@ -1,9 +1,9 @@
 # RealStop
 
-![RealStop by DecisionTune: less “Want me to?”, more doing](assets/readme-banner.png)
+![RealStop by DecisionTune: less “Want me to?”, more doing](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/readme-banner.png)
 
 [![PyPI](https://img.shields.io/pypi/v/realstop?color=da3200&style=flat-square)](https://pypi.org/project/realstop/)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-da3200?style=flat-square)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-da3200?style=flat-square)](https://github.com/decision-tune/realstop/blob/v0.2.0/LICENSE)
 [![Checks](https://github.com/decision-tune/realstop/actions/workflows/checks.yml/badge.svg)](https://github.com/decision-tune/realstop/actions/workflows/checks.yml)
 [![Status: research preview](https://img.shields.io/badge/status-research_preview-4f5661?style=flat-square)](#limits)
 
@@ -37,9 +37,9 @@ The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task finge
 
 ## See the decision
 
-![Three synthetic stops replayed through RealStop 0.1.1: a hand-back blocks; a production approval and a finished task pass](assets/hook-replay.gif)
+![Three synthetic stops replayed through RealStop 0.1.1: a hand-back blocks; a production approval and a finished task pass](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/hook-replay.gif)
 
-*Actual hook outputs on synthetic fixtures, using the phrase rules. This shows stop decisions—not proof of task completion or benchmark performance. [Static explanation](assets/how-it-works.png) · [Replay provenance](assets/README.md).*
+*Actual hook outputs on synthetic fixtures, using the phrase rules. This shows stop decisions—not proof of task completion or benchmark performance. [Static explanation](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/how-it-works.png) · [Replay provenance](https://github.com/decision-tune/realstop/blob/v0.2.0/assets/README.md).*
 
 | Agent's attempted stop | Intended behavior |
 |---|---|
@@ -71,7 +71,7 @@ The `realstop` command needs Python 3.9+ and uses only the standard library. The
 
 On a first install from a terminal (no `--judge`, nothing stored yet), `realstop setup` asks which judge to use. Option 1 is private and local, and Enter picks it. Option 2 is the cloud decision model. Setup reads your key with no echo and falls back to option 1 if you give none. Option 3 is rules only. Piped, CI and plugin installs never ask. They use the local default and print how to change it (`realstop judge local|jev|rules`). A re-run keeps your stored choice.
 
-The repo does not contain the model file. `realstop setup` fetches it (see [MODEL.md](MODEL.md)) and checks its sha256. It does not download again when the checksums match. For no model at all, run `realstop judge rules`. If the download fails for any reason, setup says so and the hook uses the phrase rules.
+The repo does not contain the model file. `realstop setup` fetches it (see [MODEL.md](https://github.com/decision-tune/realstop/blob/v0.2.0/MODEL.md)) and checks its sha256. It does not download again when the checksums match. For no model at all, run `realstop judge rules`. If the download fails for any reason, setup says so and the hook uses the phrase rules.
 
 Setup writes the three hooks and `config.json` in `~/.claude/realstop/`, the skill in `~/.claude/skills/realstop/`, and four hook entries in `~/.claude/settings.json`. It edits `settings.json` atomically under a lock, after a timestamped backup. It refuses an invalid `settings.json` and never overwrites it. It also writes a sha256 manifest of the hooks and config, so the next stop detects a hand edit. Every option is in `realstop --help`.
 
@@ -128,7 +128,7 @@ Both ways at once is safe. If the plugin is enabled, `realstop setup` adds no ho
 - A request of yours that names the approval requirement, plus a reply that asks consent for that same action.
 - A consent sentence for a listed approval step: publish, force push, production deploy, destructive SQL, sending an email, a payment, and similar.
 
-The reply's own words never excuse a stop. Details, the config keys and the shadow mode (log, never block) are in [docs/REFERENCE.md](docs/REFERENCE.md).
+The reply's own words never excuse a stop. Details, the config keys and the shadow mode (log, never block) are in [docs/REFERENCE.md](https://github.com/decision-tune/realstop/blob/v0.2.0/docs/REFERENCE.md).
 
 **Steps handed to you.** The rules block a reply that ends by handing you a command to run or paste, or an approval it could run itself. The exception is when the harness denied that same command this turn and the reply names the denial. List the steps you have approved for good in `~/.claude/realstop/standing.txt`, one phrase or regex per line. `install.sh` writes that file once and never overwrites it. When the agent asks consent for one of those steps, the stop is blocked and the agent is told you pre-approved it. Only a sentence that actually asks or hands you a step counts. Text that merely describes your approvals does not.
 
@@ -198,7 +198,7 @@ realstop learn --status    # counts: pending, stored, strictness shift
 - English only.
 - Steps that need your approval, and approvals you wrote into a request, are found by pattern lists. An unlisted command gets a neutral nudge.
 - The tamper manifest only detects edits: an agent running as you can rewrite it. A real boundary needs the hook and config outside the agent's write access.
-- More in [docs/REFERENCE.md](docs/REFERENCE.md), "Known limits".
+- More in [docs/REFERENCE.md](https://github.com/decision-tune/realstop/blob/v0.2.0/docs/REFERENCE.md), "Known limits".
 
 ## Tests
 
@@ -211,8 +211,8 @@ The fixtures under `tests/regressions/` are synthetic stand-ins written for this
 
 ## Support
 
-Run `realstop diagnose` and paste its output into a bug report. It lists versions, the judge, config keys, hook registration, and the last 10 decisions as path and rule labels. It prints no reply or request text, keys, session ids, settings contents or paths, and your home shows as `~`. Read it once before posting. Never paste your `settings.json`, `stops.jsonl` or an agent reply into a public issue. Report a security problem privately through [SECURITY.md](SECURITY.md). Anything else: hello@decisiontune.com.
+Run `realstop diagnose` and paste its output into a bug report. It lists versions, the judge, config keys, hook registration, and the last 10 decisions as path and rule labels. It prints no reply or request text, keys, session ids, settings contents or paths, and your home shows as `~`. Read it once before posting. Never paste your `settings.json`, `stops.jsonl` or an agent reply into a public issue. Report a security problem privately through [SECURITY.md](https://github.com/decision-tune/realstop/blob/v0.2.0/SECURITY.md). Anything else: hello@decisiontune.com.
 
 ## License
 
-Apache-2.0 for the code and the model, the same license as DecisionTune. Copyright 2026 DecisionTune contributors. How the model is fetched and checked: [MODEL.md](MODEL.md). A technical report will follow. Benchmark: [RealStopBench](https://github.com/decision-tune/realstopbench).
+Apache-2.0 for the code and the model, the same license as DecisionTune. Copyright 2026 DecisionTune contributors. How the model is fetched and checked: [MODEL.md](https://github.com/decision-tune/realstop/blob/v0.2.0/MODEL.md). A technical report will follow. Benchmark: [RealStopBench](https://github.com/decision-tune/realstopbench).

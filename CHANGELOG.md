@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (2026-11-02)
+
+Fix the banner, replay GIF and repository links in the PyPI description.
+
 ## 0.2.0 (2026-11-02)
 
 - Add a rules-only Codex CLI main-agent adapter with shadow reporting, opt-in bounded continuation, and independent setup, pause, resume, status and uninstall.
