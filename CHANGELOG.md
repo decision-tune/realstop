@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (2026-11-03)
+
+Package metadata only: add project links (homepage, repository, model, changelog, issues), keywords and classifiers for PyPI, and the real-session demo GIF and cropped banner in the README. No code changes.
+
 ## 0.2.1 (2026-11-02)
 
 Fix the banner, replay GIF and repository links in the PyPI description.
