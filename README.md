@@ -17,7 +17,23 @@ realstop setup --judge local
 realstop serve
 ```
 
-The local server needs Apple silicon. Keep it running in a separate terminal. For no model download, use `realstop setup --judge rules` instead. This release integrates with **Claude Code, not Codex**.
+The local server needs Apple silicon. Keep it running in a separate terminal. For no model download, use `realstop setup --judge rules` instead. For Codex CLI, use the separate rules adapter below.
+
+## Codex CLI
+
+RealStop 0.2.0 adds a rules adapter for main-agent turns on macOS and Linux. Tested with Codex CLI 0.166.0. Install the 0.2.0 wheel from the [GitHub release](https://github.com/decision-tune/realstop/releases/tag/v0.2.0), then run:
+
+```bash
+realstop setup --host codex --judge rules
+# In a fresh Codex CLI session, open /hooks and review the RealStop commands.
+realstop status --host codex
+```
+
+The first install uses shadow mode. Status counts eligible offers (`would_block`), other phrase hits, and passes. To enable a single continuation for a matching offer, run `realstop setup --host codex --mode block`. Use `--mode shadow` to switch back. Pause, resume and uninstall each accept `--host codex`. Existing Claude installations have their own configuration.
+
+The adapter reuses the phrase detector, then checks whether the offered action matches a direct instruction from this turn. For example, “add a changelog entry” matches “Should I add the changelog entry?” A different optional offer passes. Matching is deliberately narrow. Successful matching cannot verify the state of a file. The nudge asks the agent to check for remaining authorized work and respect approvals. Plan mode, subagents, ambiguous or missing evidence, and repeated stops pass. Keep host permission controls enabled.
+
+The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task fingerprints and tool counts under `$CODEX_HOME/realstop` (default `~/.codex/realstop`), expires turn records after 24 hours on the next submit, and retains aggregate counts. It reads no transcript and calls no model service. Local/model/cloud judges, correction learning and the performance figures below apply to the Claude integration. See [OpenAI’s hook specification](https://learn.chatgpt.com/docs/hooks).
 
 ## See the decision
 

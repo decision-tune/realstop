@@ -28,6 +28,7 @@ packages = ["realstop"]
 
 # the hooks, scripts, data and skill ship inside the wheel as realstop/_res (realstop/paths.py: res_root)
 [tool.hatch.build.targets.wheel.force-include]
+"hooks/codex-stop.py" = "realstop/_res/hooks/codex-stop.py"
 "hooks/no-quit.py" = "realstop/_res/hooks/no-quit.py"
 "hooks/correction.py" = "realstop/_res/hooks/correction.py"
 "hooks/learn.py" = "realstop/_res/hooks/learn.py"

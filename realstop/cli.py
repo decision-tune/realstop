@@ -67,6 +67,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--model", metavar="DIR", default="")
     p.add_argument("--port", type=port_arg, default=None)
     sub.add_parser("uninstall", help="remove RealStop's hook entries and files (your standing.txt is kept)")
+    for name in ("setup", "pause", "resume", "status", "uninstall"):
+        sub.choices[name].add_argument("--host", choices=("claude", "codex"), default="claude")
+    sub.choices["setup"].add_argument("--mode", choices=("shadow", "block"), help="Codex only; default shadow")
     return ap
 
 
@@ -130,6 +133,18 @@ def main(argv=None) -> int:
         return subprocess.call([sys.executable, "-I", paths.helper("realstop_learn.py")] + argv[1:])
     a = build_parser().parse_args(argv)  # an unknown command or flag exits 2
     try:
+        if getattr(a, "host", "") == "codex":
+            from . import codex
+            if a.cmd == "setup" and (a.judge not in (None, "rules", "phrases") or a.strength or a.model or a.port or a.key_stdin or a.keep_server):
+                print("Codex supports the rules judge only.", file=sys.stderr)
+                return 2
+            try:
+                return codex.command(a)
+            except (ValueError, OSError) as exc:
+                print("RealStop Codex: %s" % exc, file=sys.stderr)
+                return 2
+        if a.cmd == "setup" and a.mode:
+            build_parser().error("--mode requires --host codex")
         if a.cmd == "setup":
             return install.setup(stored_judge(a.judge), a.strength, a.port or "", a.model, a.key_stdin, a.keep_server,
                                  ask=False if a.yes else None)
