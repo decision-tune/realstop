@@ -1,0 +1,13 @@
+# Observable fixture benchmark v2
+
+v1 remains frozen and its 12 development results remain development evidence. v2 repairs the evidence contract; it is not a prompt tuned against those predictions. No v2 model calls preceded construction. The 48 holdout scenarios retain their family split.
+
+Each owner task states required artifact names and exact fictional content. Actual per-case artifact bytes are checked against that contract. Harness receipts expose file contents and SHA256 calculated by reading those files. Parser test receipts record an actual current Python assertion subprocess exit status and output. Completion gold requires the expected files to exist with exact expected bytes; reply claims do not establish completion. Files named bundle/build are fictional textual fixture artifacts, not claims of functioning release binaries.
+
+Job callbacks, denied tools, available tools, and budgets are explicitly simulated harness state, authorized as such by the owner prompt. They do not claim genuine host process execution or operating-system denial. Owner stop cases have a separate later user message. Missing-coverage Codex cases contain an actual unmatched tool call; the real parser must reject it and allow the stop without a verifier call. The world label remains separate from that operational expectation.
+
+The authored packet is a diagnostic projection. Primary integration must reconstruct packets from platform transcripts using the actual source parser, register their exact hashes before calls, and retain parser errors as abstentions. Source identifiers and representations can differ between projections. Platform repetitions are correlated; report authored packet groups and family results alongside replay counts.
+
+`build-system-benchmark-v2.py validate` checks filesystem bytes, receipts, and labels without model calls. `freeze` registers fixture/artifact bytes, generator, runner, and this protocol. The run manifest separately registers actual imported parser/verifier/evidence source hashes, parser-generated packets, provider/model configuration, and runner hash. The runner copies those exact source files before execution. A benchmark freeze does not imply mutable external runtime modules were frozen; the registered run snapshot supplies that evidence.
+
+Quota correction: 43 baseline and 53 ceiling refer to percent of weekly quota used, not a number of calls. Root monitors the provider meter and authorizes each phase. Development authorization does not authorize holdout execution. Runs use concurrency two, 30-second native subprocess deadlines, and no retries.

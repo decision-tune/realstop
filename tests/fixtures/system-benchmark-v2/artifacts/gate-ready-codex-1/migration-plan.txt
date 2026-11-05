@@ -1,0 +1,1 @@
+Back up production. Add nullable column. Verify row counts. Ask owner before applying to production.

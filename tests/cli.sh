@@ -106,5 +106,5 @@ check "the console script points at cli:main" 'realstop = "realstop.cli:main"' "
 missing=""; for f in $(sed -n '/force-include\]/,/^$/s/^"\([^"]*\)" = .*/\1/p' "$here/pyproject.toml"); do [ -e "$here/$f" ] || missing="$missing $f"; done
 check "every file the wheel bundles exists in the clone" "" "$missing"
 check "the bundled layout is the one paths.res_root() expects" "codex-stop.py no-quit.py correction.py learn.py" "$(sed -n 's#^"hooks/\([a-z.-]*\)" = "realstop/_res/hooks/.*#\1#p' "$here/pyproject.toml" | tr '\n' ' ' | sed 's/ $//')"
-check "the CLI imports only the standard library" "" "$(grep -hE '^(import|from) ' "$here"/realstop/*.py | grep -vE '^from (\.|__future__)|^import (argparse|fcntl|getpass|hashlib|json|os|platform|re|shlex|shutil|sqlite3|subprocess|sys|tempfile|time|urllib\.error|urllib\.request|plistlib)$|^from (pathlib|typing|importlib\.metadata) import' )"
+check "the CLI imports only the standard library" "" "$(grep -hE '^(import|from) ' "$here"/realstop/*.py | grep -vE '^from (\.|__future__)|^import (argparse|copy|fcntl|getpass|hashlib|http\.client|importlib\.util|json|math|os|platform|random|re|selectors|shlex|shutil|signal|sqlite3|subprocess|sys|tempfile|threading|time|urllib\.error|urllib\.request|plistlib)$|^from (collections|datetime|http\.server|pathlib|typing|urllib\.parse|importlib\.metadata) import' )"
 exit $fail

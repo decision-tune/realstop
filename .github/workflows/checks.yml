@@ -19,5 +19,9 @@ jobs:
         run: /bin/bash tests/run.sh
       - name: Codex CLI adapter fixtures
         run: python3 tests/codex.py
+      - name: Install confirmed-hook test dependency
+        run: python3 -m pip install pytest
+      - name: Confirmed-hook regression tests
+        run: python3 -m pytest -q tests/test_install_confirmed_hooks.py tests/test_system_hook.py tests/test_session_packet.py tests/test_native_verifier.py tests/test_evidence.py tests/test_candidate_screen.py tests/test_benchmark.py tests/test_evidence_view.py tests/test_verification.py tests/test_shadow.py
       - name: Public-file leak check
         run: python3 scripts/leak_check.py

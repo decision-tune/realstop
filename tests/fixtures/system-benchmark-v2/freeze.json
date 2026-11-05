@@ -1,0 +1,33 @@
+{
+  "schema": "realstop.system-benchmark.v2",
+  "files": {
+    "docs/system-benchmark-v2.md": "242c28d76b092f4076567a6d765d6faadcaeb1c72303620432dff9945324e5a9",
+    "scripts/build-system-benchmark-v2.py": "418fdc88bd23315a305106d8abe421900242c8dcfb04f7ddc556041243687a61",
+    "scripts/run-system-benchmark.py": "b6b5c4ccfbb94d49b60cfc3595ebb079be01fee5809c1a34d04dd80f3b97e739",
+    "tests/fixtures/system-benchmark-v2/artifacts/alternatives-claude-1/fixture.json": "8c79c93bf91825536c08bc8a8a8b5a34feef6007e7d060ccfca02a352eed0f8e",
+    "tests/fixtures/system-benchmark-v2/artifacts/alternatives-codex-1/fixture.json": "8c79c93bf91825536c08bc8a8a8b5a34feef6007e7d060ccfca02a352eed0f8e",
+    "tests/fixtures/system-benchmark-v2/artifacts/approval-claude-1/dist/bundle.tgz": "1e0f527f1f6eedae9cb0855dcca88326f423c0a8dbcaedb28c2665f28f9b0e63",
+    "tests/fixtures/system-benchmark-v2/artifacts/approval-codex-1/dist/bundle.tgz": "1e0f527f1f6eedae9cb0855dcca88326f423c0a8dbcaedb28c2665f28f9b0e63",
+    "tests/fixtures/system-benchmark-v2/artifacts/artifact-claude-1/report.txt": "bbc959e6a36f413703400320f65ad160466e4ffd14579f19b7caa1da0316cf82",
+    "tests/fixtures/system-benchmark-v2/artifacts/artifact-codex-1/report.txt": "bbc959e6a36f413703400320f65ad160466e4ffd14579f19b7caa1da0316cf82",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-claude-1/a.json": "662cd743e286df4c45d258fcbce8e8a5f88de5c83e333a5c20ddda317fa38ad1",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-claude-1/b.json": "4a668e7329c751f3a6695e485982440b9da07eb30e2d9689d39859b5f4bbb362",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-claude-1/validation.json": "6cb9af0a2790e38a90667ba0159fe1725110f6a7230a8192eb71a2b4a94329c2",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-codex-1/a.json": "662cd743e286df4c45d258fcbce8e8a5f88de5c83e333a5c20ddda317fa38ad1",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-codex-1/b.json": "4a668e7329c751f3a6695e485982440b9da07eb30e2d9689d39859b5f4bbb362",
+    "tests/fixtures/system-benchmark-v2/artifacts/coverage-codex-1/validation.json": "6cb9af0a2790e38a90667ba0159fe1725110f6a7230a8192eb71a2b4a94329c2",
+    "tests/fixtures/system-benchmark-v2/artifacts/gate-ready-claude-1/migration-plan.txt": "be1d565afedfb1bc3e482b82559aee858a0db247c6996e614acdf070c259c95c",
+    "tests/fixtures/system-benchmark-v2/artifacts/gate-ready-codex-1/migration-plan.txt": "be1d565afedfb1bc3e482b82559aee858a0db247c6996e614acdf070c259c95c",
+    "tests/fixtures/system-benchmark-v2/artifacts/injection-claude-1/summary.txt": "b708c7bbc6c2aa53b4d16bc2dee8a94330e9f6aa7c5fc8b466ff49221e6c3b0b",
+    "tests/fixtures/system-benchmark-v2/artifacts/injection-codex-1/summary.txt": "b708c7bbc6c2aa53b4d16bc2dee8a94330e9f6aa7c5fc8b466ff49221e6c3b0b",
+    "tests/fixtures/system-benchmark-v2/artifacts/quotation-claude-1/example.txt": "38e6c8e04980fc36f1715fbdb0da81c4f51944f7957482dd4c9555b1aa1d7926",
+    "tests/fixtures/system-benchmark-v2/artifacts/quotation-codex-1/example.txt": "38e6c8e04980fc36f1715fbdb0da81c4f51944f7957482dd4c9555b1aa1d7926",
+    "tests/fixtures/system-benchmark-v2/artifacts/scope-claude-1/explanation.txt": "d16f56e98972646ac118495f27b086bff3e7256030dba572b20b8015e650199c",
+    "tests/fixtures/system-benchmark-v2/artifacts/scope-codex-1/explanation.txt": "d16f56e98972646ac118495f27b086bff3e7256030dba572b20b8015e650199c",
+    "tests/fixtures/system-benchmark-v2/artifacts/tests-claude-1/parser.py": "8bd9be13d35f6c10d787104f0ac2a5495539728b1bfbf11af9ab9a804f9faf90",
+    "tests/fixtures/system-benchmark-v2/artifacts/tests-claude-1/test-results.json": "dd5756b61d771cd4b985cdab8d702f92a6fbd5c28f83d8b6b9347ff0fb083cca",
+    "tests/fixtures/system-benchmark-v2/artifacts/tests-codex-1/parser.py": "8bd9be13d35f6c10d787104f0ac2a5495539728b1bfbf11af9ab9a804f9faf90",
+    "tests/fixtures/system-benchmark-v2/artifacts/tests-codex-1/test-results.json": "dd5756b61d771cd4b985cdab8d702f92a6fbd5c28f83d8b6b9347ff0fb083cca",
+    "tests/fixtures/system-benchmark-v2/cases.json": "1532ead4e10ab700fbcd50daf1b48c10fbdb315b9ada4e63a621b9b35890a951"
+  }
+}

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.3rc1 (experimental prerelease, 2026-11-05)
+
+- Add an opt-in experimental evidence-confirmed hook, native verifier, private telemetry, and guarded installer for Claude Code and Codex. Existing rules adapters remain available.
+- Include synthetic benchmarks and document their limits; no experimental model weights are included.
+- Publish the seven-hour observation: 36 ancestry abstentions, zero verifier calls or blocks; the observed session was unsupported. Synthetic fixture results do not establish live accuracy.
+- Acknowledge Verdict overlap; keep the proposed Supervisor design outside this release.
+
 ## 0.2.2 (2026-11-03)
 
 Package metadata only: add project links (homepage, repository, model, changelog, issues), keywords and classifiers for PyPI, and the real-session demo GIF and cropped banner in the README. No code changes.
