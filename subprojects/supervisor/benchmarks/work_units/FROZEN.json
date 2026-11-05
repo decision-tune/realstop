@@ -1,0 +1,7 @@
+{
+  "manifest_sha256": "876d5bd485b1f1554a7c92bcc4b74d6c7bbd84162eb240d3fe3e1fdaf0049383",
+  "expected_outcomes_frozen_before_agent_runs": true,
+  "agent_runs": 0,
+  "purpose": "Executable public artifact-check calibration; not model performance evidence.",
+  "schema_sha256": "95be9d54a2569a70d4aca777922cbbe4c2e8e57a16f43bcfad6f2bb75fe150fa"
+}
