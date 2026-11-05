@@ -10,6 +10,10 @@ Mean native-verifier latency was7.50s, p9513.86s across all48 cases including ch
 
 At the existing experimental classifier threshold, classifier→verifier caught15/24 quits with0false interventions, versus18/24 for verifier-only. It saved six of44 native calls. The release therefore defaults to verifier-only to prioritize catching quits. The fine-tuned ModernBERT candidate remains available as an opt-in screening mode; it is not credited with the verifier-only gain.
 
+## Live observation
+
+The [seven-hour observation](live-monitoring.md) found no eligible checks in one large, branched session: 36 completed checks all failed ancestry before verification, with zero verifier calls or interventions. It was not protected. No intervention quality or accuracy was measured. The future Supervisor design is separate, and is not shipped.
+
 ## Evidence and limits
 
 The full-reader benchmark packets are protected by regression hashes from the measured run. A fallback streams at most256MiB, at most16MiB per line, with a5s parsing deadline; it retains current-turn evidence and all observed owner instructions, explicitly reports omitted earlier assistant/tool history, preserves runtime restrictions, call IDs and error receipts, and treats tool metadata as non-owner text. No decisive-evidence completeness is inferred from successful parsing.

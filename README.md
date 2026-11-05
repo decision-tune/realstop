@@ -39,6 +39,8 @@ The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task finge
 
 The `0.2.3rc1` candidate includes an opt-in evidence-confirmed Stop hook for Claude Code and Codex. The existing `realstop` command and Codex rules adapter retain their behavior. This experimental hook uses native authenticated CLI verifiers and can send selected transcript evidence to the configured provider. Synthetic replay results are not real-session accuracy estimates; incomplete, oversized or unsupported sessions can abstain. Review [the release notes](docs/confirmed-release.md) before enabling it.
 
+The [seven-hour live observation](docs/live-monitoring.md) found **0/36 eligible completed checks** in one large, branched session: all failed ancestry parsing, with no verifier calls or blocks. This session was unsupported; no real-session protection or intervention quality was demonstrated.
+
 From a checkout of this release, run `python3 scripts/install-confirmed-hooks.py --help` to prepare a dry-run installation and review its configuration paths. The installer supports `--mode shadow` and `--mode enforce`, creates an immutable release, and provides a guarded rollback. Codex hook trust still requires host review. The optional `realstop-screen` classifier requires a separately supplied experimental bundle; no model weights are included in this release.
 
 Set `REALSTOP_TELEMETRY_PATH` to a JSONL file inside a private directory to opt into local metadata-only hook telemetry. It records identifiers, timing, fixed status labels and a transcript digest, not transcript text. Write failures do not prevent stopping.
