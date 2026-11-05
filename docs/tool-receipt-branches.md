@@ -47,16 +47,7 @@ source mismatch, mixed text, duplicates, stale source reuse, unknown flags and l
 position ambiguity. A full-packet stale-ID regression initially demonstrated an
 unsafe acceptance in the prototype; the exact current-source binding fixes it.
 
-A bounded parser-barrier probe of the real 1.38GB session advances past eleven
-proven tool-receipt edges and then abstains at its **first compaction boundary,
-original line2203**, after 4,153,980 bytes. The probe uses a nonempty placeholder
-reply solely to test the earliest parser barrier; it does not validate a Stop reply
-or produce an eligible packet. No full-file rescan, model call or hook installation
-is needed. Private metadata evidence is stored separately; no original user/tool
-bodies are included in this repository.
-
-This does **not** make that session protected. Earlier analysis also found owner
-history exceeding the native packet budget. Compaction lineage, later unknown
-branches, inherited constraints, bounded indexing and the evidence budget remain
-separate blockers. The live hooks and release checkout are unchanged. Do not deploy
-or advertise coverage based only on this prototype or remove those abstention guards.
+This does not make compacted or oversized transcripts eligible. Compaction lineage,
+later unknown branches, inherited constraints, bounded indexing and the evidence
+budget remain separate requirements. Do not remove those abstention guards or
+advertise full-session coverage based only on tool-edge normalization.
