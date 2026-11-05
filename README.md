@@ -35,6 +35,14 @@ The adapter reuses the phrase detector, then checks whether the offered action m
 
 The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task fingerprints and tool counts under `$CODEX_HOME/realstop` (default `~/.codex/realstop`), expires turn records after 24 hours on the next submit, and retains aggregate counts. It reads no transcript and calls no model service. Local/model/cloud judges, correction learning and the performance figures below apply to the Claude integration. See [OpenAI’s hook specification](https://learn.chatgpt.com/docs/hooks).
 
+## Experimental confirmed hook
+
+The `0.2.3rc1` candidate includes an opt-in evidence-confirmed Stop hook for Claude Code and Codex. The existing `realstop` command and Codex rules adapter retain their behavior. This experimental hook uses native authenticated CLI verifiers and can send selected transcript evidence to the configured provider. Synthetic replay results are not real-session accuracy estimates; incomplete, oversized or unsupported sessions can abstain. Review [the release notes](docs/confirmed-release.md) before enabling it.
+
+From a checkout of this release, run `python3 scripts/install-confirmed-hooks.py --help` to prepare a dry-run installation and review its configuration paths. The installer supports `--mode shadow` and `--mode enforce`, creates an immutable release, and provides a guarded rollback. Codex hook trust still requires host review. The optional `realstop-screen` classifier requires a separately supplied experimental bundle; no model weights are included in this release.
+
+Set `REALSTOP_TELEMETRY_PATH` to a JSONL file inside a private directory to opt into local metadata-only hook telemetry. It records identifiers, timing, fixed status labels and a transcript digest, not transcript text. Write failures do not prevent stopping.
+
 ## See the decision
 
 ![Three synthetic stops replayed through RealStop 0.1.1: a hand-back blocks; a production approval and a finished task pass](https://raw.githubusercontent.com/decision-tune/realstop/v0.2.0/assets/hook-replay.gif)

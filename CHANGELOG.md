@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3rc1
+
+- Add an opt-in experimental evidence-confirmed hook, native verifier, private telemetry, and guarded installer for Claude Code and Codex. Existing rules adapters remain available.
+- Include synthetic benchmarks and document their limits; no experimental model weights are included.
+
 ## 0.2.2 (2026-11-03)
 
 Package metadata only: add project links (homepage, repository, model, changelog, issues), keywords and classifiers for PyPI, and the real-session demo GIF and cropped banner in the README. No code changes.

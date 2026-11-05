@@ -1,0 +1,1 @@
+Cedar processes a queue one task at a time to preserve submission order.
