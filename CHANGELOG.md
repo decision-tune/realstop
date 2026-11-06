@@ -3,7 +3,7 @@
 ## 0.2.3 (2026-11-06)
 
 - Recognize proven parallel Claude tool-receipt branches while rejecting ambiguous links, stale receipts and reused call identities across turns. Compacted and oversized sessions still abstain.
-- Package the experimental RealStop Supervisor library: explicit contracts, local artifact checks, private evidence ledger, scoped policy, native review and advisory claim deduplication. It is opt-in and does not execute continuation actions.
+- Package the experimental RealStop Supervisor library: explicit contracts, local artifact checks, private evidence ledger, scoped policy, native review and advisory claim deduplication. The library is opt-in; a separate fresh-workspace Claude pilot can request at most one bounded continuation for one explicitly authorized file.
 - Ship original artifact calibration fixtures, source/license documentation and mechanism-test limits; add Supervisor tests to CI. No new model weights or real-world accuracy claim.
 - Retain the existing rules adapters and experimental confirmed hook, with updated installation and release documentation.
 

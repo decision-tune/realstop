@@ -47,7 +47,7 @@ Set `REALSTOP_TELEMETRY_PATH` to a JSONL file inside a private directory to opt 
 
 ## Experimental RealStop Supervisor
 
-Version 0.2.3 also ships `realstop.supervisor`, a separate opt-in Python package for explicit task contracts, bounded artifact checks, evidence storage, scoped permissions and native-confirmed advisory claims. It does not install a Supervisor hook or execute continuation actions. Start with `python -m realstop.supervisor --help` and the [Supervisor guide](subprojects/supervisor/README.md).
+Version 0.2.3 also ships `realstop.supervisor`, a separate opt-in Python package for explicit task contracts, bounded artifact checks, evidence storage, scoped permissions and native-confirmed advisory claims. It is not enabled automatically. A separate [Claude-only pilot](subprojects/supervisor/PILOT.md) launches a fresh private workspace for one explicit file-writing contract, permits at most one native-confirmed Stop block, and checks the final file hash. It does not attach to existing sessions or install global hooks. Start with `python -m realstop.supervisor --help` and the [Supervisor guide](subprojects/supervisor/README.md).
 
 The controlled mechanism check used a synthetic contract and supplied reply: missing authorized work produced one native-confirmed claim; matching work and denied permission produced none. This is not a live-quit recovery result or an accuracy improvement. General long-session coverage, compaction support and automatic authority extraction remain unresolved. [Release guide](docs/release-0.2.3.md).
 

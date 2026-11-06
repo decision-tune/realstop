@@ -1,6 +1,6 @@
 # RealStop Supervisor: experimental evidence-aware continuation
 
-Supervisor is a standalone RealStop subproject. It ships as an experimental Python library and is not installed in the live hooks. Its potential contribution is combining captured evidence, scoped permissions, artifact checks, native confirmation, and bounded retries. Existing goal controllers already address persistence; an incremental outcome benefit has not yet been established.
+Supervisor is a standalone RealStop subproject. It ships as an experimental Python library plus an explicit [fresh-workspace Claude pilot](PILOT.md). It is not enabled in global hooks. Its potential contribution is combining captured evidence, scoped permissions, artifact checks, native confirmation, and bounded retries. Existing goal controllers already address persistence; an incremental outcome benefit has not yet been established.
 
 ## Implemented components
 
