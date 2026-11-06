@@ -11,6 +11,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import time
 import uuid
 
 from .contracts import _pairs, _path
@@ -62,11 +63,18 @@ def _stop_process(process, first_signal):
     for sig in signals:
         try: os.killpg(process.pid, sig)
         except ProcessLookupError: pass
-        try:
-            process.wait(timeout=5)
-            return
-        except (subprocess.TimeoutExpired, KeyboardInterrupt):
-            continue
+        try: process.wait(timeout=5)
+        except (subprocess.TimeoutExpired, KeyboardInterrupt): continue
+        # A reaped leader does not imply its process group has no descendants.
+        # Give surviving children a bounded grace period before escalating.
+        if sig == signal.SIGKILL: return
+        deadline=time.monotonic()+1
+        while True:
+            try: os.killpg(process.pid, 0)
+            except ProcessLookupError: return
+            if time.monotonic() >= deadline: break
+            try: time.sleep(0.05)
+            except KeyboardInterrupt: break
 
 
 def launch(raw, *, timeout=180):

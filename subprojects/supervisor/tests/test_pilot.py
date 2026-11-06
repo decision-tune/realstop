@@ -6,13 +6,14 @@ import subprocess
 import sys
 from pathlib import Path
 import tempfile
+import time
 import unittest
 import uuid
 from unittest.mock import Mock, patch
 
 from realstop.supervisor import native_review
 from realstop.supervisor.ledger import Ledger
-from realstop.supervisor.pilot import validate_contract, _write_private, launch
+from realstop.supervisor.pilot import validate_contract, _write_private, launch, _stop_process
 from realstop.supervisor.pilot_hook import handle
 
 
@@ -117,6 +118,30 @@ class PilotTests(unittest.TestCase):
                 settings=json.loads((runroot/'private'/'settings.json').read_text())
                 for event,groups in settings['hooks'].items():
                     self.assertIn('--event '+event,groups[0]['hooks'][0]['command'])
+
+    def test_shutdown_escalates_after_leader_exits_before_child(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ready=Path(tmp)/'ready'; stopped=Path(tmp)/'stopped'
+            child=("import signal,time,pathlib; "
+                   "signal.signal(signal.SIGINT,signal.SIG_IGN); "
+                   "signal.signal(signal.SIGTERM,lambda *_: (pathlib.Path(%r).write_text('term'),exit(0))); "
+                   "pathlib.Path(%r).write_text('ready'); time.sleep(60)" % (str(stopped),str(ready)))
+            leader="import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',sys.argv[1]]); time.sleep(60)"
+            process=subprocess.Popen([sys.executable,'-c',leader,child],start_new_session=True,
+                                     stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            try:
+                deadline=time.monotonic()+5
+                while not ready.exists() and time.monotonic()<deadline: time.sleep(.02)
+                self.assertTrue(ready.exists())
+                _stop_process(process,signal.SIGINT)
+                deadline=time.monotonic()+5
+                while not stopped.exists() and time.monotonic()<deadline: time.sleep(.02)
+                self.assertTrue(stopped.exists(),'descendant did not receive SIGTERM')
+                self.assertIsNotNone(process.poll())
+            finally:
+                try: os.killpg(process.pid,signal.SIGKILL)
+                except ProcessLookupError: pass
+                process.wait(timeout=5)
 
     def test_reservation_remains_consumed_after_exception(self):
         self.user()
