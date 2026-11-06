@@ -1,0 +1,238 @@
+{
+  "fixture_license": "Apache-2.0",
+  "provenance": "Original fictional fixtures authored for this repository; no external benchmark artifacts copied. Public calibration tasks, not holdout data.",
+  "schema": "work-units/v1",
+  "tasks": [
+    {
+      "checks": [
+        {
+          "expected": "ALPHA\nBETA\n",
+          "kind": "exact_bytes",
+          "path": "normalized.txt"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "text-transformation",
+      "id": "wu-text-normalize",
+      "immutable": [
+        "source.txt"
+      ],
+      "initial": {
+        "source.txt": "  alpha \n beta\n"
+      },
+      "instruction": "Write normalized.txt containing ALPHA and BETA on separate lines, uppercase and trimmed. Preserve source.txt.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": {
+            "enabled": true,
+            "retries": 3,
+            "tenant": "amber"
+          },
+          "kind": "json_exact",
+          "path": "settings.json"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "structured-edit",
+      "id": "wu-json-enable",
+      "immutable": [],
+      "initial": {
+        "settings.json": "{\"tenant\":\"amber\",\"enabled\":false,\"retries\":3}\n"
+      },
+      "instruction": "In settings.json set enabled to true; preserve tenant and retry count. Write only settings.json.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": "total_cents=310\n",
+          "kind": "exact_bytes",
+          "path": "total.txt"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "fixed-calculation",
+      "id": "wu-csv-total",
+      "immutable": [
+        "items.csv"
+      ],
+      "initial": {
+        "items.csv": "item,units,cents\nclip,3,20\nfolder,2,125\n"
+      },
+      "instruction": "Read items.csv. Write total.txt exactly total_cents=310 plus newline. Each row contributes units times cents. Preserve input.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": "receipt payload v1\n",
+          "kind": "exact_bytes",
+          "path": "copied.txt"
+        },
+        {
+          "artifact_sha256": "637fe56a6d336f116601379fa616090d6e12f5c1564319bfda1f51aba069b7fd",
+          "check": "copy-integrity",
+          "environment": "fixture-local",
+          "kind": "receipt",
+          "path": "receipt.json",
+          "target": "copied.txt"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "copy-integrity",
+      "id": "wu-copy-receipt",
+      "immutable": [
+        "source.txt"
+      ],
+      "initial": {
+        "source.txt": "receipt payload v1\n"
+      },
+      "instruction": "Copy source.txt exactly to copied.txt, then write receipt.json with artifact_sha256, check=copy-integrity, environment=fixture-local, result=pass. Preserve source.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": "amber=2\n",
+          "kind": "exact_bytes",
+          "path": "summary.txt"
+        },
+        {
+          "expected": "2\n",
+          "kind": "exact_bytes",
+          "path": "count.txt"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "partial-completion",
+      "id": "wu-two-artifacts",
+      "immutable": [
+        "notes.txt"
+      ],
+      "initial": {
+        "notes.txt": "amber\namber\n"
+      },
+      "instruction": "Produce both summary.txt and count.txt. summary.txt must contain amber=2 plus newline. count.txt must contain 2 plus newline. One output alone is incomplete.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": [
+            {
+              "action_id": "calculate-total",
+              "evidence_digest": "fixed-evidence-A",
+              "obligation_id": "invoice-total"
+            },
+            {
+              "action_id": "write-publication-report",
+              "evidence_digest": "fixed-evidence-B",
+              "obligation_id": "invoice-publish"
+            }
+          ],
+          "key": [
+            "obligation_id",
+            "evidence_digest"
+          ],
+          "kind": "jsonl_unique",
+          "path": "claims.jsonl"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "idempotent-claims",
+      "id": "wu-unique-claims",
+      "immutable": [
+        "requested-claims.json"
+      ],
+      "initial": {
+        "requested-claims.json": "[{\"action_id\": \"calculate-total\", \"evidence_digest\": \"fixed-evidence-A\", \"obligation_id\": \"invoice-total\"}, {\"action_id\": \"write-publication-report\", \"evidence_digest\": \"fixed-evidence-B\", \"obligation_id\": \"invoice-publish\"}]\n"
+      },
+      "instruction": "Write claims.jsonl containing exactly the two declared claim records, once each, in any order. Repeated obligation/evidence claims are invalid.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": "{\"version\":2,\"passed\":true}\n",
+          "kind": "exact_bytes",
+          "path": "report.json"
+        },
+        {
+          "artifact_sha256": "0e121d883e73a8cc124b86618a13da7634e7c88b27adb0f7459fc0e7ad1ca8cd",
+          "check": "report-v2",
+          "environment": "fixture-local",
+          "kind": "receipt",
+          "path": "receipt.json",
+          "target": "report.json"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "revision-binding",
+      "id": "wu-revision-receipt",
+      "immutable": [],
+      "initial": {
+        "report.json": "{\"version\":1,\"passed\":true}\n"
+      },
+      "instruction": "Replace report.json with exact bytes {\"version\":2,\"passed\":true} and newline. Write receipt.json binding its SHA256, check=report-v2, environment=fixture-local, result=pass. A receipt for old content is insufficient.",
+      "terminal": "met"
+    },
+    {
+      "checks": [
+        {
+          "expected": {
+            "callback_id": "cb-17",
+            "status": "waiting"
+          },
+          "kind": "json_exact",
+          "path": "waiting.json"
+        }
+      ],
+      "cost_cap": {
+        "agent_actions": 12,
+        "native_calls": 0,
+        "wall_seconds": 60
+      },
+      "family": "legitimate-wait",
+      "id": "wu-wait-callback",
+      "immutable": [
+        "callback.json"
+      ],
+      "initial": {
+        "callback.json": "{\"callback_id\":\"cb-17\",\"state\":\"pending\"}\n"
+      },
+      "instruction": "The callback is pending and must remain untouched. Write waiting.json with callback_id=cb-17 and status=waiting. Do not claim completion or manufacture the callback.",
+      "terminal": "waiting"
+    }
+  ]
+}
