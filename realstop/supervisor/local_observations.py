@@ -9,7 +9,7 @@ import os
 from . import artifact_checks
 from .contracts import parse_contract
 
-ORIGIN='local_artifact_checker/v1'
+ORIGIN='local_artifact_checker/v2'
 PREFIX='local-observation:'
 
 
@@ -43,6 +43,11 @@ def check_and_record(db, provider, session, task, criterion_id, *, fresh_owned_s
         operations=registry['operations'],environments=set(registry['environments']))
     if type(expected_version) is not int or expected_version!=declarations.ledger_version:
         raise ValueError('stale_version')
+    # Capture an ordered ledger frontier before the filesystem check. The
+    # observation sink's version compare-and-swap rejects any intervening event.
+    scope=db.read_scope(provider,session,task)
+    if scope['version'] != declarations.ledger_version: raise ValueError('stale_version')
+    event_ids=[event['event_id'] for event in scope['events']]
     criterion=next((c for c in declarations.criteria if c.id==criterion_id),None)
     if criterion is None: raise ValueError('unknown_criterion')
     path,environment,before=_root(registry,root_id)
@@ -53,7 +58,9 @@ def check_and_record(db, provider, session, task, criterion_id, *, fresh_owned_s
         raise ValueError('root_or_registry_changed')
     record={'origin':ORIGIN,'provider':provider,'session':session,'task':task,
             'contract_source_event_id':declarations.source_event_id,'root_id':root_id,
-            'root_identity':before,'registry_digest':fingerprint,'observation':asdict(observation)}
+            'root_identity':before,'registry_digest':fingerprint,
+            'checked_after_ledger_version':scope['version'],'checked_after_event_ids':event_ids,
+            'observation':asdict(observation)}
     original=_canonical(record)
     db._record_local_observation(provider,session,task,expected_version=expected_version,
         observation_id=observation.observation_id,root_path=path,original=original)
@@ -67,8 +74,13 @@ def validate_record(row, registry, provider, session, task):
     original=row['original']
     if not isinstance(original,str) or hashlib.sha256(original.encode('utf-8')).hexdigest()!=row['digest']: raise ValueError('invalid_digest')
     record=json.loads(original)
-    if _canonical(record)!=original or not isinstance(record,dict) or set(record)!={'origin','provider','session','task','contract_source_event_id','root_id','root_identity','registry_digest','observation'}: raise ValueError('invalid_observation')
+    if _canonical(record)!=original or not isinstance(record,dict) or set(record)!={'origin','provider','session','task','contract_source_event_id','root_id','root_identity','registry_digest','checked_after_ledger_version','checked_after_event_ids','observation'}: raise ValueError('invalid_observation')
     if (record['origin'],record['provider'],record['session'],record['task'])!=(ORIGIN,provider,session,task): raise ValueError('scope_mismatch')
+    frontier=record['checked_after_event_ids']; version=record['checked_after_ledger_version']
+    if (type(version) is not int or version < 1 or not isinstance(frontier,list) or not frontier
+        or any(not isinstance(e,str) or not e or len(e)>512 for e in frontier)
+        or len(frontier)!=len(set(frontier)) or len(frontier)>version
+        or frontier[0]!=record['contract_source_event_id']): raise ValueError('invalid_frontier')
     if record['registry_digest']!=_registry_digest(registry): raise ValueError('registry_changed')
     path,environment,identity=_root(registry,record['root_id'])
     obs=record['observation']

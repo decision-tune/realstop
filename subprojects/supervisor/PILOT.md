@@ -12,7 +12,7 @@ Create `contract.json` with this example (the expected file is exactly `hello` f
   "revision": 2,
   "contract_id": "a86bfc7b-a5a9-47ea-bbcc-d03c0f0c842f",
   "task_id": "hello-pilot",
-  "task_instruction": "Write the text hello followed by one newline to hello.txt in the workspace.",
+  "task_instruction": "The required end state is hello.txt containing exactly hello followed by one newline. If it disappears or differs before you finish, write it again to restore that end state.",
   "criteria": [{
     "id": "hello-file",
     "artifact_relative_path": "hello.txt",

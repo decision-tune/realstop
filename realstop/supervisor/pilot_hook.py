@@ -90,7 +90,8 @@ def _stop(db,state,private,payload):
         actions=(NextAction(a['id'],c['id'],acceptance,'owner'),),
         permissions=(Permission(a['id'],'allowed','owner'),),coverage='supported',feasibility='actionable',
         authority_complete=True,scope_resolved=True)
-    proposed='Complete the explicitly allowed action '+a['operation_id']+' for '+c['artifact_relative_path']+'.'
+    proposed=('Use Write on '+c['artifact_relative_path']+' to satisfy the explicit contract; '
+              'the current artifact check is '+observation['status']+'.')
     outcome=coordinate(db,'claude',state['session'],state['task'],snap,a['id'],proposed,final,
                        {'owner':declarations.source_event_id},timeout=30,observation_registry=registry)
     _write_private(private/'attempt-result.json',{'reason':outcome.get('reason'),'claim_saved':outcome.get('claim_saved') is True})

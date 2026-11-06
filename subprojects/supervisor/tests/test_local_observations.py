@@ -45,6 +45,36 @@ class LocalObservationTests(unittest.TestCase):
         self.assertEqual(len({first,second,third}),3)
         for row in rows: self.assertEqual(local.validate_record(row,self.registry,'claude','s','t')['origin'],local.ORIGIN)
         self.assertEqual(self.db.read_scope('claude','other','t')['observations'],[])
+    def test_frontier_orders_actual_terminal_call_before_check(self):
+        pre={'session_id':'s','hook_event_name':'PreToolUse','tool_use_id':'write1','tool_name':'Write','tool_input':{'file_path':'report','content':'correct'}}
+        post=dict(pre,hook_event_name='PostToolUse',tool_response={'success':True})
+        capture(self.db,'claude','t','s',pre); capture(self.db,'claude','t','s',post)
+        before=self.db.read_scope('claude','s','t')
+        self.record()
+        record=json.loads(self.read()[0]['original'])
+        self.assertEqual(record['checked_after_ledger_version'],before['version'])
+        self.assertEqual(record['checked_after_event_ids'],[e['event_id'] for e in before['events']])
+        self.assertEqual(record['checked_after_event_ids'][-1],adapt('claude','t',post)[0]['event_id'])
+        self.assertEqual(before['calls']['write1'],'terminal')
+
+    def test_event_during_file_check_fails_compare_and_swap(self):
+        original=local.artifact_checks.check
+        def racing(*args,**kwargs):
+            result=original(*args,**kwargs)
+            pre={'session_id':'s','hook_event_name':'PreToolUse','tool_use_id':'later','tool_name':'Write','tool_input':{}}
+            capture(self.db,'claude','t','s',pre)
+            return result
+        with patch.object(local.artifact_checks,'check',side_effect=racing):
+            with self.assertRaises(Conflict): self.record()
+        self.assertEqual(self.read(),[])
+
+    def test_invalid_frontier_rejected_even_with_rehashed_record(self):
+        self.record(); row=self.read()[0]
+        record=json.loads(row['original']); record['checked_after_event_ids']=[self.user_id,self.user_id]
+        original=json.dumps(record,sort_keys=True,separators=(',',':'),ensure_ascii=False)
+        altered=dict(row,original=original,digest=hashlib.sha256(original.encode()).hexdigest())
+        with self.assertRaises(ValueError): local.validate_record(altered,self.registry,'claude','s','t')
+
     def test_stale_version_and_registry_or_root_change(self):
         v=self.db.snapshot('claude','s','t');oid=self.record()
         with self.assertRaises(ValueError): self.record(expected_version=v)
