@@ -4,8 +4,7 @@ from pathlib import Path
 import sys
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from policy import (Acceptance, Obligation, Receipt, NextAction, Permission,
+from realstop.supervisor.policy import (Acceptance, Obligation, Receipt, NextAction, Permission,
                     Snapshot, evaluate_policy, validate_confirmed_action,
                     build_residual_packet)
 

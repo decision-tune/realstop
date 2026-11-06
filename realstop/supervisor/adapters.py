@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Versioned, conservative adapters for documented command-hook inputs."""
 import hashlib
 import json

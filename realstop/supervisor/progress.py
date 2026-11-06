@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Pure advisory progress over application-supplied criteria and receipts."""
 from dataclasses import dataclass
 

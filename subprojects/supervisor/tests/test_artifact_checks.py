@@ -7,9 +7,8 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-import artifact_checks as a
-from contracts import CriterionDeclaration
+from realstop.supervisor import artifact_checks as a
+from realstop.supervisor.contracts import CriterionDeclaration
 
 class ArtifactTests(unittest.TestCase):
     def setUp(self):

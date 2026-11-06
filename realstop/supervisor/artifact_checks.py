@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Bounded local SHA-256 observations, not authorization or durable proof."""
 from dataclasses import dataclass
 import hashlib
@@ -7,7 +9,7 @@ import stat
 import time
 import uuid
 
-from contracts import CriterionDeclaration, ContractError, _id, _path
+from .contracts import CriterionDeclaration, ContractError, _id, _path
 
 HARD_MAX_BYTES = 16 * 1024 * 1024
 CHUNK = 65536

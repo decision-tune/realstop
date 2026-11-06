@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Advisory native review of one application-selected action; never executes it."""
 from dataclasses import asdict
 import hashlib
@@ -6,7 +8,7 @@ import math
 import os
 import tempfile
 
-from policy import Snapshot, evaluate_policy, validate_confirmed_action
+from .policy import Snapshot, evaluate_policy, validate_confirmed_action
 from realstop.native_verifier import _run, MAX_INPUT, MAX_OUTPUT, MAX_TIMEOUT
 
 FIELDS = ('obligation', 'authorization', 'unfinished', 'feasibility', 'action')

@@ -6,9 +6,8 @@ import sys
 import unittest
 from unittest.mock import patch
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from policy import Acceptance, Obligation, NextAction, Permission, Receipt, Snapshot
-import native_review as nr
+from realstop.supervisor.policy import Acceptance, Obligation, NextAction, Permission, Receipt, Snapshot
+from realstop.supervisor import native_review as nr
 
 class NativeReviewTests(unittest.TestCase):
     def setUp(self):

@@ -52,4 +52,4 @@ packages = ["realstop"]
 "CHANGELOG.md" = "realstop/_res/CHANGELOG.md"
 
 [tool.hatch.build.targets.sdist]
-include = ["realstop", "hooks", "scripts", "data", "skills", "docs", "tests/fixtures/system-benchmark", "tests/fixtures/system-benchmark-v2", "tests/fixtures/confirmed_packet_hashes.json", "CHANGELOG.md", "README.md", "LICENSE", "pyproject.toml"]
+include = ["realstop", "subprojects/supervisor", "hooks", "scripts", "data", "skills", "docs", "tests/fixtures/system-benchmark", "tests/fixtures/system-benchmark-v2", "tests/fixtures/confirmed_packet_hashes.json", "CHANGELOG.md", "README.md", "LICENSE", "pyproject.toml"]

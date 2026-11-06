@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Optional local tool-outcome advisory; no policy or continuation authority.
 
 A caller may explicitly supply a reviewed Verdict-compatible instance. This module

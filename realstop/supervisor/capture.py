@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 """Fail-open native hook capture; intentionally returns no intervention."""
 import argparse
 import json
 import sys
 import uuid
-from adapters import adapt, Rejected
-from ledger import Ledger
+from .adapters import adapt, Rejected
+from .ledger import Ledger
 
 MAX_BYTES = 1024 * 1024
 

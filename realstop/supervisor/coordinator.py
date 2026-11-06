@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 """Conservative advisory coordinator over a local capture ledger."""
 from dataclasses import replace
 import json
 
-import native_review
-import local_observations
-from policy import Snapshot, Intervention, evaluate_policy, validate_confirmed_action
+from . import native_review
+from . import local_observations
+from .policy import Snapshot, Intervention, evaluate_policy, validate_confirmed_action
 
 
 def _source(event, provider, session):

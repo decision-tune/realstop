@@ -7,9 +7,9 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from adapters import adapt, Rejected
-from capture import capture
-from ledger import Ledger, Conflict
+from realstop.supervisor.adapters import adapt, Rejected
+from realstop.supervisor.capture import capture
+from realstop.supervisor.ledger import Ledger, Conflict
 
 class CaptureTests(unittest.TestCase):
     def setUp(self):
@@ -58,7 +58,7 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(event['kind'],'assistant'); self.assertEqual(event['payload'],p)
         self.assertEqual(gap,'stop_invocation_identity_unavailable')
     def test_cli_fail_open_bounded_and_gaps(self):
-        cmd=[sys.executable,str(ROOT/'capture.py'),'--provider','claude','--task','t','--session','s','--database',str(self.path)]
+        cmd=[sys.executable,'-m','realstop.supervisor.capture','--provider','claude','--task','t','--session','s','--database',str(self.path)]
         for data in (b'{',b'x'*(1024*1024+1)):
             r=subprocess.run(cmd,input=data,capture_output=True,check=True)
             self.assertEqual(r.stdout,b'{}\n'); self.assertEqual(r.stderr,b'')

@@ -4,7 +4,7 @@ Supervisor is a standalone RealStop subproject. It is not installed in the live 
 
 ## Implemented components
 
-- [Capture adapters](PROVIDER_SCHEMAS.md) record scoped Claude/Codex hook payloads in a private [SQLite ledger](ledger.py), with explicit gaps and tool-call correlation. Claude capture has been exercised in controlled real sessions; Codex real-host capture still needs normal hook trust activation.
+- [Capture adapters](PROVIDER_SCHEMAS.md) record scoped Claude/Codex hook payloads in a private [SQLite ledger](../../realstop/supervisor/ledger.py), with explicit gaps and tool-call correlation. Claude capture has been exercised in controlled real sessions; Codex real-host capture still needs normal hook trust activation.
 - [Opt-in contracts](CONTRACTS.md) accept bounded structured declarations from the sole captured user prompt of a host-attested fresh scope. Registered operations constrain requested permissions; declarations cannot establish complete authority, produce receipts, or execute actions.
 - [Policy](POLICY.md) separates completion, authorization, feasibility, and coverage. Trusted typed obligations and revision-bound receipts determine whether native review is eligible.
 - [Native review](NATIVE_REVIEW.md) binds the complete evidence packet and selected action to a restricted Claude or Codex response. Confirmation requires exact source references.
@@ -28,7 +28,7 @@ SQLite serializes local claims, not external actions. Store the database on a tr
 ```sh
 python3 -m unittest discover -s subprojects/supervisor/tests -v
 python3 -m unittest discover -s subprojects/supervisor/benchmarks/work_units -p "test_*.py" -v
-python3 subprojects/supervisor/ledger.py status /private/path/ledger.sqlite3 codex session-id task-id
+python3 -m realstop.supervisor.ledger status /private/path/ledger.sqlite3 codex session-id task-id
 ```
 
 See [design](DESIGN.md), [evaluation requirements](EVALUATION.md), and [source/license inventory](REUSE.md). No model-accuracy, production-readiness, or commercial-demand claim is made.

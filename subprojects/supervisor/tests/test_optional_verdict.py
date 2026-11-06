@@ -5,8 +5,7 @@ import subprocess
 import sys
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from optional_verdict import observe_tool, MAX_COMMAND_CHARS, MAX_STREAM_CHARS
+from realstop.supervisor.optional_verdict import observe_tool, MAX_COMMAND_CHARS, MAX_STREAM_CHARS
 
 
 class RecordedPredictor:
@@ -22,7 +21,7 @@ class RecordedPredictor:
 
 class OptionalVerdictTests(unittest.TestCase):
     def test_default_does_not_import_optional_package_or_contact_network(self):
-        module_dir = str(Path(__file__).resolve().parents[1])
+        module_dir = str(Path(__file__).resolve().parents[3])
         code = """
 import builtins, socket, sys
 sys.path.insert(0, sys.argv[1])
@@ -35,7 +34,7 @@ builtins.__import__ = guarded
 def forbidden(*args, **kwargs):
     raise AssertionError('network used')
 socket.socket.connect = forbidden
-from optional_verdict import observe_tool
+from realstop.supervisor.optional_verdict import observe_tool
 result = observe_tool(command='test', exit_code=0)
 assert result.status == 'disabled' and result.label == 'unknown'
 """

@@ -6,8 +6,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from ledger import Ledger, Conflict
+from realstop.supervisor.ledger import Ledger, Conflict
 
 class LedgerTests(unittest.TestCase):
     def setUp(self):
@@ -63,8 +62,7 @@ class LedgerTests(unittest.TestCase):
 
     def test_cli_exports_metadata_without_originals(self):
         self.db.append(self.event('a'))
-        cli=Path(__file__).resolve().parents[1]/'ledger.py'
-        r=subprocess.run([sys.executable,str(cli),'export',str(self.path),'codex','s','t'],capture_output=True,text=True,check=True)
+        r=subprocess.run([sys.executable,'-m','realstop.supervisor.ledger','export',str(self.path),'codex','s','t'],capture_output=True,text=True,check=True)
         self.assertNotIn('private user content',r.stdout)
         self.assertEqual(json.loads(r.stdout)['events'],1)
 

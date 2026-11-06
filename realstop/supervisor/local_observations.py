@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 """Trusted local artifact check-and-record; not a native hook event."""
 from dataclasses import asdict
 import hashlib
 import json
 import os
 
-import artifact_checks
-from contracts import parse_contract
+from . import artifact_checks
+from .contracts import parse_contract
 
 ORIGIN='local_artifact_checker/v1'
 PREFIX='local-observation:'
@@ -84,7 +86,7 @@ def validate_record(row, registry, provider, session, task):
 
 def recheck_record(row, registry, provider, session, task):
     """Compare a new file check to the recorded result; no atomicity with SQLite."""
-    from contracts import CriterionDeclaration
+    from .contracts import CriterionDeclaration
     record=validate_record(row,registry,provider,session,task)
     obs=record['observation']
     if obs['status']=='unverifiable': return False

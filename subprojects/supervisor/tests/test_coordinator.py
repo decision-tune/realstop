@@ -7,13 +7,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from adapters import adapt
-from capture import capture
-from coordinator import coordinate
-from ledger import Ledger
-from policy import Acceptance, Obligation, NextAction, Permission, Snapshot
-import native_review
+from realstop.supervisor.adapters import adapt
+from realstop.supervisor.capture import capture
+from realstop.supervisor.coordinator import coordinate
+from realstop.supervisor.ledger import Ledger
+from realstop.supervisor.policy import Acceptance, Obligation, NextAction, Permission, Snapshot
+from realstop.supervisor import native_review
 
 class CoordinatorTests(unittest.TestCase):
     def setUp(self):

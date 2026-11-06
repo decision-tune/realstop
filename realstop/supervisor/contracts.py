@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Explicit declaration ingress for a host-attested fresh local scope."""
 from dataclasses import dataclass
 import hashlib
@@ -6,7 +8,7 @@ from pathlib import PurePosixPath
 import re
 import uuid
 
-from adapters import adapt
+from .adapters import adapt
 
 MAX_BYTES = 8192
 MAX_ITEMS = 16

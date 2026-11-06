@@ -4,10 +4,9 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from capture import capture
-from contracts import parse_contract, ContractError
-from ledger import Ledger
+from realstop.supervisor.capture import capture
+from realstop.supervisor.contracts import parse_contract, ContractError
+from realstop.supervisor.ledger import Ledger
 
 class ContractTests(unittest.TestCase):
     def setUp(self):

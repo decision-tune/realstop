@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Local event ledger; no interpretation or continuation policy."""
 import argparse
 import hashlib

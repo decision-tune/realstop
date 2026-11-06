@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Deterministic policy over trusted application facts, never transcript inference.
 
 Construction is a trust boundary: callers must authenticate and scope all facts.
