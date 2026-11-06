@@ -1,15 +1,18 @@
 import hashlib
 import json
 import os
+import signal
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
 import uuid
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from realstop.supervisor import native_review
 from realstop.supervisor.ledger import Ledger
-from realstop.supervisor.pilot import validate_contract, _write_private
+from realstop.supervisor.pilot import validate_contract, _write_private, launch
 from realstop.supervisor.pilot_hook import handle
 
 
@@ -83,6 +86,38 @@ class PilotTests(unittest.TestCase):
         self.assertEqual(handle(self.private,self.payload('PreToolUse',**tool)),{})
         self.assertEqual(handle(self.private,self.payload('PostToolUse',tool_response={'filePath':str(self.root/'answer.txt')},**tool)),{})
         with patch.object(native_review,'_run',side_effect=self.mock_native): self.assertEqual(self.stop()['decision'],'block')
+    def test_hook_cli_uses_trusted_event_for_failures(self):
+        cases=[('PreToolUse',b'{',True),('PreToolUse',b'x'*(1024*1024+1),True),
+               ('PreToolUse',json.dumps(self.payload('Stop')).encode(),True),
+               ('Stop',b'{',False),('Stop',b'x'*(1024*1024+1),False)]
+        for event,raw,denied in cases:
+            with self.subTest(event=event, size=len(raw)):
+                proc=subprocess.run([sys.executable,'-m','realstop.supervisor.pilot_hook',
+                    '--state',str(self.private),'--event',event],input=raw,capture_output=True,check=True)
+                output=json.loads(proc.stdout)
+                self.assertEqual(output.get('hookSpecificOutput',{}).get('permissionDecision')=='deny',denied)
+        # Inaccessible state also cannot turn a PreToolUse failure into allow.
+        proc=subprocess.run([sys.executable,'-m','realstop.supervisor.pilot_hook',
+            '--state',str(self.private/'missing'),'--event','PreToolUse'],input=b'{}',capture_output=True,check=True)
+        self.assertEqual(json.loads(proc.stdout)['hookSpecificOutput']['permissionDecision'],'deny')
+
+    def test_launcher_interrupt_stops_process_group_and_returns_130(self):
+        process=Mock(pid=424242)
+        process.wait.side_effect=[KeyboardInterrupt(),subprocess.TimeoutExpired('claude',5),
+                                  subprocess.TimeoutExpired('claude',5),0]
+        with tempfile.TemporaryDirectory() as tmp:
+            runroot=Path(tmp)/'pilot'; runroot.mkdir()
+            with patch('realstop.supervisor.pilot.tempfile.mkdtemp',return_value=str(runroot)), \
+                 patch('realstop.supervisor.pilot.subprocess.Popen',return_value=process), \
+                 patch('realstop.supervisor.pilot.os.killpg') as kill:
+                self.assertEqual(launch(self.raw),130)
+                self.assertEqual([call.args for call in kill.call_args_list],[(424242,signal.SIGINT),
+                    (424242,signal.SIGTERM),(424242,signal.SIGKILL)])
+                self.assertTrue((runroot/'private'/'settings.json').is_file())
+                settings=json.loads((runroot/'private'/'settings.json').read_text())
+                for event,groups in settings['hooks'].items():
+                    self.assertIn('--event '+event,groups[0]['hooks'][0]['command'])
+
     def test_reservation_remains_consumed_after_exception(self):
         self.user()
         with patch('realstop.supervisor.pilot_hook.coordinate',side_effect=RuntimeError):

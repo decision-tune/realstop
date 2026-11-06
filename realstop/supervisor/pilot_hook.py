@@ -134,12 +134,14 @@ def handle(private,payload):
 
 
 def main():
-    parser=argparse.ArgumentParser(); parser.add_argument('--state',required=True); args=parser.parse_args()
+    parser=argparse.ArgumentParser(); parser.add_argument('--state',required=True); parser.add_argument('--event',required=True,choices=('UserPromptSubmit','PreToolUse','PostToolUse','PostToolUseFailure','Stop','PreCompact','PostCompact','InstructionsLoaded','SubagentStart','SubagentStop')); args=parser.parse_args()
     payload=None
     try:
         raw=sys.stdin.buffer.read(MAX_INPUT+1)
         if len(raw)>MAX_INPUT: raise ValueError('oversized input')
         payload=json.loads(raw)
+        if not isinstance(payload,dict) or payload.get('hook_event_name') != args.event:
+            raise ValueError('hook_event_mismatch')
         response=handle(Path(args.state),payload)
     except Exception:
         # Best effort persistent gap: a failure must not later look complete.
@@ -148,7 +150,7 @@ def main():
             try: _gap(db,state,'pilot_hook_error')
             finally: db.close()
         except Exception: pass
-        response=_deny() if isinstance(payload,dict) and payload.get('hook_event_name')=='PreToolUse' else {}
+        response=_deny() if args.event=='PreToolUse' else {}
     print(json.dumps(response))
 
 

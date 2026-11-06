@@ -56,6 +56,19 @@ def _write_private(path, value):
         json.dump(value, f, ensure_ascii=False)
 
 
+def _stop_process(process, first_signal):
+    """Bounded shutdown of the isolated parent and its descendants."""
+    signals = (first_signal, signal.SIGTERM, signal.SIGKILL) if first_signal == signal.SIGINT else (signal.SIGTERM, signal.SIGKILL)
+    for sig in signals:
+        try: os.killpg(process.pid, sig)
+        except ProcessLookupError: pass
+        try:
+            process.wait(timeout=5)
+            return
+        except (subprocess.TimeoutExpired, KeyboardInterrupt):
+            continue
+
+
 def launch(raw, *, timeout=180):
     data=validate_contract(raw)
     session=str(uuid.uuid4())
@@ -72,8 +85,9 @@ def launch(raw, *, timeout=180):
     _write_private(private/'state.json',state)
     package_root=str(Path(__file__).resolve().parents[2])
     script='import sys;sys.path.insert(0,'+repr(package_root)+');from realstop.supervisor.pilot_hook import main;main()'
-    command=' '.join(shlex.quote(v) for v in (sys.executable,'-c',script,'--state',str(private)))
-    hook=lambda name: {'matcher':'','hooks':[{'type':'command','command':command,'timeout':45}]}
+    def hook(name):
+        command=' '.join(shlex.quote(v) for v in (sys.executable,'-c',script,'--state',str(private),'--event',name))
+        return {'matcher':'','hooks':[{'type':'command','command':command,'timeout':45}]}
     settings={'hooks':{name:[hook(name)] for name in ('UserPromptSubmit','PreToolUse','PostToolUse','PostToolUseFailure','Stop','PreCompact','PostCompact','InstructionsLoaded','SubagentStart','SubagentStop')}}
     _write_private(private/'settings.json',settings)
     args=['claude','-p','--session-id',session,'--setting-sources','','--settings',str(private/'settings.json'),
@@ -87,11 +101,11 @@ def launch(raw, *, timeout=180):
         process=subprocess.Popen(args,cwd=workspace,start_new_session=True)
         try: code=process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
-            os.killpg(process.pid,signal.SIGTERM)
-            try: process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid,signal.SIGKILL); process.wait()
+            _stop_process(process,signal.SIGTERM)
             print('Pilot timed out.',file=sys.stderr); code=1
+        except KeyboardInterrupt:
+            _stop_process(process,signal.SIGINT)
+            print('Pilot cancelled.',file=sys.stderr); code=130
     except OSError:
         print('Pilot launch failed.',file=sys.stderr); code=1
     # An external check after the parent exits; never treat failure as completion.
