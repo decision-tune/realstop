@@ -14,7 +14,7 @@ Confirmed hooks have a separate dry-run installer and rollback process; see [con
 
 - The parser correction accepts only correlated tool-result branches and rejects stale or ambiguous references. It does not make compacted, incomplete or oversized histories eligible.
 - The earlier seven-hour observation recorded 36 ancestry abstentions and no native-verifier calls. It establishes a coverage failure in that session, not protection or accuracy.
-- Public artifact fixtures calibrate file checks, not general reasoning accuracy. A controlled synthetic mechanism test exercised one native-confirmed advisory claim and two zero-call controls. No continuation action was executed.
+- Public artifact fixtures calibrate file checks, not general reasoning accuracy. Earlier synthetic tests exercised advisory claims. The new controlled live pilot recovered from a test-only file deletion: one confirmed claim, a second actual Write, and a matching final hash. The completed-file control used zero verifier calls. Two earlier failed development runs are documented in the [pilot report](../subprojects/supervisor/PILOT.md); this is not a natural-session accuracy estimate.
 - Supervisor is not wired into global Stop hooks. The explicit Claude pilot installs only per-launch hooks for a fresh one-file workspace, with one native-review attempt and at most one block. This does not establish a real-world performance improvement.
 
 See [tool receipt ancestry](tool-receipt-branches.md), [monitoring](live-monitoring.md), [evaluation](../subprojects/supervisor/EVALUATION.md), and [license inventory](../subprojects/supervisor/REUSE.md).
