@@ -110,8 +110,16 @@ def parse_contract(db, provider, session, task, *, fresh_owned_scope, operations
     if len(prompt_bytes)>MAX_BYTES: raise ContractError('contract_too_large')
     try: data=json.loads(prompt,object_pairs_hook=_pairs,parse_constant=lambda _: (_ for _ in ()).throw(ContractError('invalid_json')))
     except (ValueError,TypeError,RecursionError) as exc: raise ContractError('invalid_json') from exc
-    _fields(data,('schema','contract_id','revision','task_id','criteria','actions'))
-    if data['schema']!='supervisor-contract/v1' or type(data['revision']) is not int or data['revision']!=1 or data['task_id']!=task:
+    if isinstance(data, dict) and data.get('schema') == 'supervisor-contract/v2':
+        _fields(data,('schema','contract_id','revision','task_id','task_instruction','criteria','actions'))
+        if (not isinstance(data['task_instruction'], str) or not data['task_instruction'].strip()
+                or len(data['task_instruction']) > 4096):
+            raise ContractError('invalid_instruction')
+        revision = 2
+    else:
+        _fields(data,('schema','contract_id','revision','task_id','criteria','actions'))
+        revision = 1
+    if data['schema'] != f'supervisor-contract/v{revision}' or type(data['revision']) is not int or data['revision'] != revision or data['task_id']!=task:
         raise ContractError('invalid_contract')
     try:
         contract_id=str(uuid.UUID(data['contract_id']))
@@ -120,6 +128,7 @@ def parse_contract(db, provider, session, task, *, fresh_owned_scope, operations
     criteria, actions=data['criteria'],data['actions']
     if not isinstance(criteria,list) or not 1<=len(criteria)<=MAX_ITEMS or not isinstance(actions,list) or not 1<=len(actions)<=MAX_ITEMS:
         raise ContractError('invalid_count')
+    if revision == 2 and (len(criteria) != 1 or len(actions) != 1): raise ContractError('invalid_count')
     parsed=[]; by_id={}
     for c in criteria:
         _fields(c,('id','artifact_relative_path','expected_sha256','check','environment_id'))
