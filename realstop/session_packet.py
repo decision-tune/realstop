@@ -41,6 +41,89 @@ def _extract(record):
     return role, text, calls, receipts, modalities, meta
 
 
+
+class _ToolBranches:
+    """Classify only proven Claude split-block/receipt edges; keep originals."""
+    def __init__(self):
+        self.nodes, self.positions = {}, {}
+        self.ambiguous, self.used = set(), set()
+        self.normalized = 0
+
+    @staticmethod
+    def _message(record):
+        if any(record.get(k, False) is not False for k in ('isMeta', 'isSidechain', 'isCompactSummary')):
+            return None
+        message = record.get('message')
+        if not isinstance(message, dict) or message.get('role') != record.get('type'):
+            return None
+        return message
+
+    @classmethod
+    def _result(cls, record):
+        message = cls._message(record)
+        if record.get('type') != 'user' or message is None:
+            return None
+        blocks = message.get('content')
+        if not isinstance(blocks, list) or not blocks or any(
+            not isinstance(b, dict) or b.get('type') != 'tool_result' for b in blocks):
+            return None
+        ids = tuple(b.get('tool_use_id') for b in blocks)
+        if not all(isinstance(cid, str) and cid for cid in ids) or len(set(ids)) != len(ids):
+            return None
+        anchor = record.get('sourceToolAssistantUUID')
+        if 'sourceToolAssistantUUID' in record and (not isinstance(anchor, str) or not anchor):
+            return None
+        return ('result', ids, anchor)
+
+    def observe(self, record, rid):
+        result = self._result(record)
+        if result is not None:
+            self.nodes[rid] = result
+            return
+        message = self._message(record)
+        if record.get('type') != 'assistant' or message is None:
+            return
+        group = (message.get('id'), record.get('requestId'))
+        index = record.get('apiBlockIndex')
+        if not all(isinstance(v, str) and v and len(v) <= 256 for v in group) or type(index) is not int or index < 0:
+            return
+        position = (group, index)
+        if position in self.positions:
+            self.ambiguous.add(group)
+            if group in self.used:
+                raise ValueError('missing_or_branched_ancestry')
+        self.positions[position] = rid
+        blocks = message.get('content')
+        if not isinstance(blocks, list) or not blocks or any(
+            not isinstance(b, dict) or b.get('type') != 'tool_use' for b in blocks):
+            return
+        ids = tuple(b.get('id') for b in blocks)
+        if all(isinstance(cid, str) and cid for cid in ids) and len(set(ids)) == len(ids):
+            self.nodes[rid] = ('call', group, index, ids)
+
+    @staticmethod
+    def _matches(result, parent, call_ids):
+        return (result is not None and result[0] == 'result' and
+                set(result[1]).issubset(call_ids) and
+                (result[2] is None or result[2] == parent))
+
+    def permits(self, record, parent, first_child, call_sources, receipts):
+        node, first = self.nodes.get(parent), self.nodes.get(first_child)
+        result = self._result(record)
+        if node is None or node[0] != 'call' or node[1] in self.ambiguous or first is None:
+            return False
+        call_ids = set(node[3])
+        if (not self._matches(result, parent, call_ids) or
+            any(call_sources.get(cid) != parent for cid in result[1]) or
+            set(result[1]).intersection(receipts)):
+            return False
+        continuation = (first[0] == 'call' and first[1] == node[1] and first[2] == node[2] + 1)
+        if not continuation and not self._matches(first, parent, call_ids):
+            return False
+        self.used.add(node[1])
+        self.normalized += 1
+        return True
+
 def read_session_packet(payload):
     """Return (packet, path, full-file digest); reject unprovable or oversized scope."""
     if payload.get('hook_event_name') != 'Stop':
@@ -52,7 +135,8 @@ def read_session_packet(payload):
     path = Path(payload.get('transcript_path', '')).expanduser()
     digest = hashlib.sha256()
     owners, current, runtime, ids, children, diagnostics = [], [], [], set(), set(), set()
-    calls, receipts = set(), set()
+    calls, receipts, call_sources = set(), set(), {}
+    tool_branches, first_children = _ToolBranches(), {}
     event_pending = None
     started, completed, newest_turn = set(), set(), None
     final_kind = None
@@ -85,10 +169,16 @@ def read_session_packet(payload):
                 raise ValueError('duplicate_source')
             parent = record.get('parentUuid', record.get('parent_id'))
             conversational = record.get('type') in ('user', 'assistant', 'response_item')
-            if conversational and parent is not None and (parent not in ids or (parent in children and parent not in diagnostics)):
-                raise ValueError('missing_or_branched_ancestry')
+            if conversational and parent is not None:
+                if parent not in ids:
+                    raise ValueError('missing_or_branched_ancestry')
+                if (parent in children and parent not in diagnostics and not
+                    tool_branches.permits(record, parent, first_children[parent], call_sources, receipts)):
+                    raise ValueError('missing_or_branched_ancestry')
             if conversational and parent is not None and parent not in diagnostics:
                 children.add(parent)
+                first_children.setdefault(parent, rid)
+            tool_branches.observe(record, rid)
             if not conversational:
                 diagnostics.add(rid)
             ids.add(rid)
@@ -110,7 +200,7 @@ def read_session_packet(payload):
                 tid = item.get('turn_id')
                 if tid and tid != newest_turn:
                     omitted += len(current)
-                    current, runtime, calls, receipts = [], [], set(), set()
+                    current, runtime, calls, receipts, call_sources = [], [], set(), set(), {}
                     final_kind = None
                     newest_turn = tid
                 runtime = [{'source_id': rid + ':runtime', 'role': 'tool', 'text': json.dumps(item, ensure_ascii=False, sort_keys=True)}]
@@ -123,7 +213,7 @@ def read_session_packet(payload):
                 if kind == 'task_started':
                     if tid and tid != newest_turn:
                         omitted += len(current)
-                        current, runtime, calls, receipts = [], [], set(), set()
+                        current, runtime, calls, receipts, call_sources = [], [], set(), set(), {}
                         final_kind = None
                     newest_turn = tid
                     started.add(tid)
@@ -136,7 +226,7 @@ def read_session_packet(payload):
                         raise ValueError('nontext_owner')
                     source = {'source_id': rid + ':owner-event', 'role': 'user', 'text': text}
                     omitted += len(current)
-                    current, calls, receipts = [], set(), set()
+                    current, calls, receipts, call_sources = [], set(), set(), {}
                     owners.append(source)
                     event_pending = text
                     final_kind = 'user'
@@ -151,7 +241,7 @@ def read_session_packet(payload):
                     event_pending = None
                     continue
                 omitted += len(current)
-                current, calls, receipts = [], set(), set()
+                current, calls, receipts, call_sources = [], set(), set(), {}
                 owners.append({'source_id': rid + ':text', 'role': 'user', 'text': text})
                 final_kind = 'user'
             elif text:
@@ -173,11 +263,13 @@ def read_session_packet(payload):
                 if not isinstance(cid, str) or not cid or cid in calls:
                     raise ValueError('invalid_call_id')
                 calls.add(cid)
+                call_sources[cid] = rid
                 current.append({'source_id': rid + ':call:%d' % j, 'role': 'assistant', 'text': json.dumps(raw_calls[j] if j < len(raw_calls) else call, ensure_ascii=False, sort_keys=True)})
                 final_kind = 'call'
             for j, receipt in enumerate(rs):
                 cid = receipt.get('call_id')
-                if cid not in calls or cid in receipts:
+                if (cid not in calls or cid in receipts or
+                    ('sourceToolAssistantUUID' in record and record['sourceToolAssistantUUID'] != call_sources.get(cid))):
                     raise ValueError('orphan_or_duplicate_receipt')
                 receipts.add(cid)
                 current.append({'source_id': rid + ':result:%d' % j, 'role': 'tool', 'text': json.dumps(raw_results[j] if j < len(raw_results) else receipt, ensure_ascii=False, sort_keys=True)})
@@ -199,7 +291,8 @@ def read_session_packet(payload):
                          'history_omitted': True, 'omitted_source_count': omitted,
                          'turn_identity_observed': newest_turn is not None,
                          'scope': 'all observed owner instructions and current turn; earlier assistant/tool history omitted; semantic completeness not asserted',
-                         'ancestry': 'validated original links where present; selection omits earlier non-owner sources'})
+                         'ancestry': 'validated original links where present; selection omits earlier non-owner sources',
+                         'tool_receipt_branches_normalized': tool_branches.normalized})
     if len(json.dumps(packet, ensure_ascii=False)) > MAX_INPUT:
         raise ValueError('evidence_over_budget')
     return packet, path, digest.hexdigest()

@@ -33,6 +33,6 @@ The 48 held-out Claude/Codex fixture variants derive from 26 unique authored pac
 
 ## Related work and future work
 
-[Verdict](https://github.com/Balanov/verdict) already provides a local advisory command-outcome classifier. A generic evidence classifier is not a novel contribution here. Command-outcome classification alone does not resolve task authorization, branched ancestry or compaction coverage; no Verdict runtime dependency was added. A proposed Supervisor architecture is future work on a separate branch, not shipped capability in this release. No uniqueness or commercial benefit is established.
+[Verdict](https://github.com/Balanov/verdict) already provides a local advisory command-outcome classifier. A generic evidence classifier is not a novel contribution here. Command-outcome classification alone does not resolve task authorization, branched ancestry or compaction coverage; no Verdict runtime dependency was added. Supervisor was separate future work during this observation. Version 0.2.3 now packages its experimental library; it was not exercised by this monitor and is not enabled in live hooks. No uniqueness or commercial benefit is established.
 
 Only aggregate findings are public. Raw transcripts, session identities, offsets, settings backups and operational hook arguments remain private.

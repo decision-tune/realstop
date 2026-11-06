@@ -37,13 +37,19 @@ The adapter consumes UserPromptSubmit, PostToolUse and Stop. It keeps task finge
 
 ## Experimental confirmed hook
 
-The `0.2.3rc1` candidate includes an opt-in evidence-confirmed Stop hook for Claude Code and Codex. The existing `realstop` command and Codex rules adapter retain their behavior. This experimental hook uses native authenticated CLI verifiers and can send selected transcript evidence to the configured provider. Synthetic replay results are not real-session accuracy estimates; incomplete, oversized or unsupported sessions can abstain. Review [the release notes](docs/confirmed-release.md) before enabling it.
+Version `0.2.3` includes an opt-in evidence-confirmed Stop hook for Claude Code and Codex. The existing `realstop` command and Codex rules adapter retain their behavior. This experimental hook uses native authenticated CLI verifiers and can send selected transcript evidence to the configured provider. Synthetic replay results are not real-session accuracy estimates; incomplete, oversized or unsupported sessions can abstain. Review [the release notes](docs/confirmed-release.md) before enabling it.
 
-The [seven-hour live observation](docs/live-monitoring.md) found **0/36 eligible completed checks** in one large, branched session: all failed ancestry parsing, with no verifier calls or blocks. This session was unsupported; no real-session protection or intervention quality was demonstrated.
+The [seven-hour live observation](docs/live-monitoring.md) found **0/36 eligible completed checks** in one large, branched session: all failed ancestry parsing, with no verifier calls or blocks. This session was unsupported; no real-session protection or intervention quality was demonstrated. Version 0.2.3 fixes a proven class of parallel-tool ancestry failures, but compaction and other evidence limits still cause abstention. See [the parser fix](docs/tool-receipt-branches.md).
 
 From a checkout of this release, run `python3 scripts/install-confirmed-hooks.py --help` to prepare a dry-run installation and review its configuration paths. The installer supports `--mode shadow` and `--mode enforce`, creates an immutable release, and provides a guarded rollback. Codex hook trust still requires host review. The optional `realstop-screen` classifier requires a separately supplied experimental bundle; no model weights are included in this release.
 
 Set `REALSTOP_TELEMETRY_PATH` to a JSONL file inside a private directory to opt into local metadata-only hook telemetry. It records identifiers, timing, fixed status labels and a transcript digest, not transcript text. Write failures do not prevent stopping.
+
+## Experimental RealStop Supervisor
+
+Version 0.2.3 also ships `realstop.supervisor`, a separate opt-in Python package for explicit task contracts, bounded artifact checks, evidence storage, scoped permissions and native-confirmed advisory claims. It is not enabled automatically. A separate [Claude-only pilot](subprojects/supervisor/PILOT.md) launches a fresh private workspace for one explicit file-writing contract, permits at most one native-confirmed Stop block, and checks the final file hash. It does not attach to existing sessions or install global hooks. Start with `python -m realstop.supervisor --help` and the [Supervisor guide](subprojects/supervisor/README.md).
+
+A controlled live test used an explicit repair contract and a test-only deletion after Claude wrote the file. Supervisor obtained native confirmation, Claude wrote the file again, and the final hash matched. A completed-file control needed no verifier call. Earlier failed development runs are preserved in the [pilot report](subprojects/supervisor/PILOT.md). This demonstrates a narrow recovery mechanism, not natural quit-detection accuracy. General long-session coverage, compaction support and automatic authority extraction remain unresolved. [Release guide](docs/release-0.2.3.md).
 
 ## See the decision
 
