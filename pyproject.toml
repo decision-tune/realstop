@@ -33,6 +33,7 @@ Issues = "https://github.com/decision-tune/realstop/issues"
 realstop = "realstop.cli:main"
 realstop-confirmed = "realstop.system_hook:main"
 realstop-screen = "realstop.candidate_screen:main"
+realstop-supervisor = "realstop.supervisor.pilot:main"
 
 [tool.hatch.version]
 path = "realstop/__init__.py"
