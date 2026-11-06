@@ -1,11 +1,19 @@
 {
   "name": "realstop",
   "displayName": "RealStop",
-  "version": "0.2.2",
-  "description": "Catches coding agents handing back work, measured on real sessions; stopping when they really need to.",
-  "author": { "name": "DecisionTune", "url": "https://github.com/decision-tune" },
+  "version": "0.2.3",
+  "description": "Stop hooks with opt-in native confirmation and experimental evidence-aware continuation components.",
+  "author": {
+    "name": "DecisionTune",
+    "url": "https://github.com/decision-tune"
+  },
   "homepage": "https://github.com/decision-tune/realstop",
   "repository": "https://github.com/decision-tune/realstop",
   "license": "Apache-2.0",
-  "keywords": ["stop-hook", "agent", "no-quit", "guardrail"]
+  "keywords": [
+    "stop-hook",
+    "agent",
+    "no-quit",
+    "guardrail"
+  ]
 }

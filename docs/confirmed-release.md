@@ -1,6 +1,6 @@
-# RealStop Confirmed 0.2.3rc1
+# RealStop Confirmed 0.2.3
 
-This release adds a native-LLM confirmation gate for Claude Code and local Codex Stop hooks. It is a release candidate with synthetic integration evidence, not a validated real-session accuracy claim. It does not change model weights again.
+This release adds a native-LLM confirmation gate for Claude Code and local Codex Stop hooks. The confirmation path remains experimental, with synthetic integration evidence rather than a validated real-session accuracy claim. It does not change model weights again.
 
 ## Measured result
 
@@ -12,7 +12,7 @@ At the existing experimental classifier threshold, classifier→verifier caught1
 
 ## Live observation
 
-The [seven-hour observation](live-monitoring.md) found no eligible checks in one large, branched session: 36 completed checks all failed ancestry before verification, with zero verifier calls or interventions. It was not protected. No intervention quality or accuracy was measured. The future Supervisor design is separate, and is not shipped.
+The [seven-hour observation](live-monitoring.md) found no eligible checks in one large, branched session: 36 completed checks all failed ancestry before verification, with zero verifier calls or interventions. It was not protected. No intervention quality or accuracy was measured. Version 0.2.3 corrects a proven class of parallel-tool receipt branches; it does not remove compaction or budget safeguards. Supervisor now ships as a separate experimental Python package, not an installed continuation hook.
 
 ## Evidence and limits
 

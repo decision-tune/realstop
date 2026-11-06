@@ -1,14 +1,21 @@
 {
   "name": "decision-tune",
-  "owner": { "name": "DecisionTune", "url": "https://github.com/decision-tune" },
+  "owner": {
+    "name": "DecisionTune",
+    "url": "https://github.com/decision-tune"
+  },
   "description": "DecisionTune plugins for Claude Code.",
   "plugins": [
     {
       "name": "realstop",
       "source": "./",
-      "description": "Catches coding agents handing back work, measured on real sessions; stopping when they really need to.",
+      "description": "Stop hooks with opt-in native confirmation and experimental evidence-aware continuation components.",
       "category": "productivity",
-      "tags": ["stop-hook", "agent", "no-quit"]
+      "tags": [
+        "stop-hook",
+        "agent",
+        "no-quit"
+      ]
     }
   ]
 }
