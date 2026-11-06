@@ -22,7 +22,6 @@ class NativeReviewTests(unittest.TestCase):
             'auth':{'role':'user','text':'You may run it.'},
             'action':{'role':'tool','text':'test is available'},
             'receipt':{'role':'tool','text':'test not run'}}
-        # Additional native citations must be policy source IDs.
         self.sources['action']['text']='test is available and not run'
     def args(self): return (self.snap,'run','Run the test',self.reply,self.sources,'codex')
     def response(self,prompt,verdict='confirm_action'):
@@ -63,6 +62,31 @@ class NativeReviewTests(unittest.TestCase):
         for f in (invalid,badquote,badhash,badaction):
             with self.subTest(f=f), patch.object(nr,'_run',side_effect=self.native(f)):
                 self.assertIsNone(nr.review(*self.args())['claim'])
+    def test_extra_exact_tool_feasibility_reference_is_retained(self):
+        def extra(result):
+            result['references']['feasibility']={'source_id':'receipt','quote':'not run'}
+            return result
+        with patch.object(nr,'_run',side_effect=self.native(extra)):
+            result=nr.review(*self.args())
+        self.assertEqual(result['reason'],'confirmed')
+        self.assertIn('receipt',result['metadata']['source_ids'])
+
+    def test_extra_tool_reference_must_exist_and_quote_exactly(self):
+        for ref in ({'source_id':'receipt','quote':'fabricated'},
+                    {'source_id':'unknown','quote':'not run'}):
+            def invalid(result):
+                result['references']['feasibility']=ref
+                return result
+            with self.subTest(ref=ref), patch.object(nr,'_run',side_effect=self.native(invalid)):
+                self.assertEqual(nr.review(*self.args())['reason'],'invalid_reference')
+
+    def test_tool_cannot_supply_authorization(self):
+        def invalid(result):
+            result['references']['authorization']={'source_id':'receipt','quote':'not run'}
+            return result
+        with patch.object(nr,'_run',side_effect=self.native(invalid)):
+            self.assertEqual(nr.review(*self.args())['reason'],'invalid_reference')
+
     def test_mutation_during_review_invalidates_binding(self):
         def mutate(result): self.sources['owner']['text']+=' changed'; return result
         with patch.object(nr,'_run',side_effect=self.native(mutate)):

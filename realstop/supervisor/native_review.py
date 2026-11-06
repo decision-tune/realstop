@@ -165,9 +165,13 @@ def review(snapshot, action_id, proposed_action, final_reply, sources, provider,
         # Any mutation to facts, source originals, action, or final reply invalidates review.
         current=_inputs(snapshot,action_id,proposed_action,final_reply,sources,provider,timeout)
         if current is None or current[1]!=binding: return out('stale')
+        # Pure policy accepts fact references. Additional exact native citations
+        # (for example a captured tool result) remain in metadata and binding.
+        authority_refs=tuple(dict.fromkeys((obligation.source_id, action.source_id,
+                                           refs['authorization']['source_id'])))
         claim=validate_confirmed_action(snapshot,confirmed_snapshot=snapshot.version,
             confirmed_reply_digest=snapshot.reply_digest,action_id=action_id,
-            source_ids=tuple(dict.fromkeys(source_ids)),native_confirmed=True)
+            source_ids=authority_refs,native_confirmed=True)
         metadata = {'binding':binding,'action_id':action_id,'source_ids':tuple(dict.fromkeys(source_ids))} if claim is not None else None
         return out('confirmed' if claim is not None else 'policy_rejected', claim, metadata)
     except Exception:
